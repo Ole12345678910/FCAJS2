@@ -102,50 +102,115 @@ const password = 'passord123';   // Replace with actual password
 loginAndFetchPosts(email, password);
 */
 
+// api.js
 export const API_KEY = "a359f87a-47df-408e-ac4e-a6490a77b19c";
-
 
 // Function to log in the user
 export const loginUser = async (email, password) => {
-  const response = await fetch('https://v2.api.noroff.dev/auth/login', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-          'X-Noroff-API-Key': API_KEY // Your actual API key
-      },
-      body: JSON.stringify({ email, password })
-  });
+    const response = await fetch('https://v2.api.noroff.dev/auth/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Noroff-API-Key': API_KEY,
+        },
+        body: JSON.stringify({ email, password }),
+    });
 
-  if (!response.ok) {
-      throw new Error('Login failed: ' + response.status); // Throw error if login fails
-  }
+    if (!response.ok) {
+        throw new Error('Login failed: ' + response.status);
+    }
 
-  const data = await response.json();
-  console.log('Login response data:', data); // Log the entire response for debugging
+    const data = await response.json();
+    const token = data.data.accessToken;
+    const name = data.data.name;
 
-  const token = data.data.accessToken; // Assuming this is correctly fetched
-  const name = data.data.name; // Accessing the name from the data object
-
-  localStorage.setItem('accessToken', token); // Store token in local storage
-  localStorage.setItem('username', name); // Store name in local storage as 'username'
-  console.log('Stored Username:', localStorage.getItem('username')); // Verify stored name
-  return token; // Return the access token
+    localStorage.setItem('accessToken', token);
+    localStorage.setItem('username', name);
+    return token;
 };
 
 // Function to fetch posts
 export const fetchPosts = async (token) => {
-  const response = await fetch('https://v2.api.noroff.dev/social/posts', {
-      method: 'GET',
-      headers: {
-          'Authorization': `Bearer ${token}`, // Use the token passed as an argument
-          'X-Noroff-API-Key': API_KEY // Replace with your actual API key
-      }
-  });
+    const response = await fetch('https://v2.api.noroff.dev/social/posts', {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'X-Noroff-API-Key': API_KEY,
+        }
+    });
 
-  if (!response.ok) {
-      throw new Error('Fetching posts failed: ' + response.status); // Throw error if fetching fails
-  }
+    if (!response.ok) {
+        throw new Error('Fetching posts failed: ' + response.status);
+    }
 
-  const data = await response.json(); // Parse the response data
-  return data.data; // Return the posts from the data object
+    const data = await response.json();
+    return data.data; // Return the posts from the data object
+};
+
+// Function to fetch user profile by username
+export const getUserProfile = async (username, accessToken) => {
+    const response = await fetch(`https://v2.api.noroff.dev/social/profiles/${username}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+            'X-Noroff-API-Key': API_KEY,
+        },
+    });
+
+    if (response.status === 401) {
+        throw new Error('Unauthorized access. Please check your token.');
+    }
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const profileData = await response.json();
+    return profileData.data;
+};
+
+// Function to fetch posts made by a specific user profile
+export const fetchUserPostsByProfile = async (username, accessToken) => {
+    const response = await fetch(`https://v2.api.noroff.dev/social/profiles/${username}/posts`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+            'X-Noroff-API-Key': API_KEY,
+        },
+    });
+
+    if (response.status === 401) {
+        throw new Error('Unauthorized access. Please check your token.');
+    }
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const postsData = await response.json();
+    return postsData.data;
+};
+
+// Function to delete a post
+export const deletePost = async (postId, accessToken) => {
+    const response = await fetch(`https://v2.api.noroff.dev/social/posts/${postId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+            'X-Noroff-API-Key': API_KEY,
+        },
+    });
+
+    if (response.status === 401) {
+        throw new Error('Unauthorized access. Please check your token.');
+    }
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return true; // Return success
 };

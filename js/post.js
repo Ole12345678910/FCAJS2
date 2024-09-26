@@ -1,16 +1,9 @@
-// post.js
 
-// post.js
-
-// post.js
-
-// post.js
 
 import { fetchPosts } from './api.js'; // Correctly import fetchPosts from api.js
 
-// Function to display posts in the HTML
 const displayPosts = (posts) => {
-    const postsContainer = document.getElementById('postsContainer'); // Assume you have a container in your HTML for posts
+    const postsContainer = document.getElementById('postsContainer'); // Container for posts
     postsContainer.innerHTML = ''; // Clear existing content
 
     posts.forEach(post => {
@@ -24,14 +17,16 @@ const displayPosts = (posts) => {
 
         // Create content for the post
         postElement.innerHTML = `
-            <h2>${post.title}</h2>
-            <div class="postImage">
-                ${imageElement} <!-- Display the image if it exists -->
-            </div>
-            <p>${post.body}</p>
-            <p><strong>Created At:</strong> ${new Date(post.created).toLocaleDateString()}</p>
-            <p><strong>Comments:</strong> ${post._count.comments}</p>
-            <p><strong>Reactions:</strong> ${post._count.reactions}</p>
+            <a href="details.html?postId=${post.id}" style="text-decoration: none; color: inherit;"> <!-- Link to details.html with post ID -->
+                <h2>${post.title}</h2>
+                <div class="postImage">
+                    ${imageElement} <!-- Display the image if it exists -->
+                </div>
+                <p>${post.body}</p>
+                <p><strong>Created At:</strong> ${new Date(post.created).toLocaleDateString()}</p>
+                <p><strong>Comments:</strong> ${post._count.comments}</p>
+                <p><strong>Reactions:</strong> ${post._count.reactions}</p>
+            </a>
         `;
 
         postsContainer.appendChild(postElement); // Append the post to the container
