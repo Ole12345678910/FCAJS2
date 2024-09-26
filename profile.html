@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Profile</title>
+  </head>
+  <body>
+    <div id="profile-loading" style="display:none;">Loading...</div>
+    <div id="profile-error"></div>
+    <img id="profile-banner" src="" alt="Profile Banner" />
+    <img id="profile-avatar" src="" alt="Profile Avatar" />
+    <h2 id="profile-name"></h2>
+    <p id="profile-bio"></p>
+    
+    <!-- Added elements for profile statistics -->
+    <p id="profile-posts">Posts: <span id="profile-posts-count">0</span></p>
+    <p id="profile-followers">Followers: <span id="profile-followers-count">0</span></p>
+    <p id="profile-following">Following: <span id="profile-following-count">0</span></p>
+    
+    <!-- Section for displaying user's posts -->
+    <div id="user-posts">
+        <h3>User Posts</h3>
+        <div id="posts-container"></div> <!-- This will hold the user's posts -->
+    </div>
+    
+    <script src="/js/profile.js"></script>
+  </body>
+</html>

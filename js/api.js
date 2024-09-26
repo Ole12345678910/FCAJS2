@@ -101,9 +101,7 @@ const email = 'olebul00997@stud.noroff.no'; // Replace with actual user email
 const password = 'passord123';   // Replace with actual password
 loginAndFetchPosts(email, password);
 */
-// api.js
 
-// api.js
 export const API_KEY = "a359f87a-47df-408e-ac4e-a6490a77b19c";
 
 
@@ -113,7 +111,7 @@ export const loginUser = async (email, password) => {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json',
-          'X-Noroff-API-Key': API_KEY // Replace with your actual API key
+          'X-Noroff-API-Key': API_KEY // Your actual API key
       },
       body: JSON.stringify({ email, password })
   });
@@ -123,8 +121,14 @@ export const loginUser = async (email, password) => {
   }
 
   const data = await response.json();
-  const token = data.data.accessToken; // Assuming the access token is in this structure
+  console.log('Login response data:', data); // Log the entire response for debugging
+
+  const token = data.data.accessToken; // Assuming this is correctly fetched
+  const name = data.data.name; // Accessing the name from the data object
+
   localStorage.setItem('accessToken', token); // Store token in local storage
+  localStorage.setItem('username', name); // Store name in local storage as 'username'
+  console.log('Stored Username:', localStorage.getItem('username')); // Verify stored name
   return token; // Return the access token
 };
 
