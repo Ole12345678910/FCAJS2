@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+  </head>
+  <body>
+    <header class="header-container">
+      <h1 class="logo-text" onclick="window.location.href = 'index.html';">
+        Blogole
+      </h1>
+      <p id="blogName"></p>
+    </header>
+    <hr class="line">
+    <p class="all-post-text">All the Posts</p>
+    <div id="posts-container"></div>
+    <section class="make-post">
+      <button id="show-button">Make</button>
+      <div id="create-show" class="post-container">
+        <h2 class="create-text">Create a New Post</h2>
+        <div class="title-box">
+          <label for="title">Title:</label>
+          <input type="text" id="title" placeholder="Enter title">
+        </div>
+        <div class="body-box">
+          <label for="body">Body:</label>
+          <textarea id="body" placeholder="Enter body"></textarea>
+        </div>
+        <div class="tags-box-create">
+          <label for="tags">Tags:</label>
+          <input type="text" id="tags" placeholder="Enter tags">
+        </div>
+        <div class="media-box">
+          <label for="media-url">Media URL:</label>
+          <input type="text" id="media-url" placeholder="Enter media URL">
+        </div>
+        <div class="alt-box">
+          <label for="media-alt">Media Alt Text:</label>
+          <input
+            type="text"
+            id="media-alt"
+            placeholder="Enter media alt text">
+        </div>
+        <button id="create-post-btn">Create Post</button>
+      </div>
+    </section>
+    <hr class="line">
+      <a id="login-logout-btn" class="login-footer">Login</a>
+    </footer>
+    <script defer type="module" src="/js/script.js"></script>
+    <script type="module" src="display.js"></script>
+  </body>
+</html>
