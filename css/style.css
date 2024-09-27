@@ -3,10 +3,28 @@
     margin: 0;
 }
 
-body{
+.post img, .conatiner-details img
+,.banner-container{
+    width: 300px;
+}
+
+.postcontainer,.conatiner-details,.comment-text,.reactions-text,.profile-conatiner,.no-comment-text,.post{
+    margin: 3rem;
+    border: 1px solid;
+    padding: 1rem;
+}
+
+.comment{
+    margin: 0 3rem;
+    padding: 1rem;
+}
+
+/* styles.css */
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 20px;
     background-color: gray;
 }
 
-.postImage img{
-    width: 300px;
-}

@@ -129,23 +129,22 @@ export const loginUser = async (email, password) => {
     return token;
 };
 
-// Function to fetch posts
-export const fetchPosts = async (token) => {
-    const response = await fetch('https://v2.api.noroff.dev/social/posts', {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'X-Noroff-API-Key': API_KEY,
-        }
-    });
+export async function fetchPosts(token) {
+  const response = await fetch(`https://v2.api.noroff.dev/social/posts?_author=true`, {
+      method: 'GET',
+      headers: {
+          'Authorization': `Bearer ${token}`,
+          'X-Noroff-API-Key': API_KEY,
+      }
+  });
 
-    if (!response.ok) {
-        throw new Error('Fetching posts failed: ' + response.status);
-    }
+  if (!response.ok) {
+      throw new Error('Failed to fetch posts');
+  }
 
-    const data = await response.json();
-    return data.data; // Return the posts from the data object
-};
+  const data = await response.json();
+  return data.data; // Ensure this returns an array of posts
+}
 
 // Function to fetch user profile by username
 export const getUserProfile = async (username, accessToken) => {
@@ -213,4 +212,67 @@ export const deletePost = async (postId, accessToken) => {
     }
 
     return true; // Return success
+};
+
+
+// Function to fetch all user profiles
+export const fetchAllUserProfiles = async (accessToken) => {
+  const response = await fetch('https://v2.api.noroff.dev/social/profiles', {
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+          'X-Noroff-API-Key': API_KEY,
+      },
+  });
+
+  if (response.status === 401) {
+      throw new Error('Unauthorized access. Please check your token.');
+  }
+
+  if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const profilesData = await response.json();
+  return profilesData;
+};
+
+// Function to add a comment to a post
+export const addComment = async (postId, commentBody, token) => {
+  const response = await fetch(`https://v2.api.noroff.dev/social/posts/${postId}/comment`, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          'X-Noroff-API-Key': API_KEY,
+      },
+      body: JSON.stringify({
+          body: commentBody
+      })
+  });
+
+  if (!response.ok) {
+      throw new Error('Failed to add comment: ' + response.statusText);
+  }
+
+  const data = await response.json();
+  return data;
+};
+
+// Function to delete a comment from a post
+export const deleteComment = async (postId, commentId, token) => {
+  const response = await fetch(`https://v2.api.noroff.dev/social/posts/${postId}/comment/${commentId}`, {
+      method: 'DELETE',
+      headers: {
+          'Authorization': `Bearer ${token}`,
+          'X-Noroff-API-Key': API_KEY,
+      }
+  });
+
+  if (!response.ok) {
+      throw new Error('Failed to delete comment: ' + response.statusText);
+  }
+
+  return true; // If successful, return true
 };

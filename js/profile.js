@@ -1,111 +1,236 @@
-// profile.js
-import { getUserProfile, fetchUserPostsByProfile, deletePost } from './api.js'; // Adjust path as necessary
+import { fetchPosts, addComment, deleteComment, API_KEY } from './api.js'; // Import necessary functions
 
-// Function to display User Profile and Posts
-async function showUserProfile() {
-    const accessToken = localStorage.getItem('accessToken');
-    const targetUsername = localStorage.getItem('username'); // Get username from localStorage
+// Function to get the post ID from the URL
+function getPostIdFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('postId'); // Retrieve the postId from the URL
+}
 
-    if (!accessToken || !targetUsername) {
-        console.error('User is not logged in or missing access token/username.');
-        window.location.href = '/login.html'; // Redirect to login page
-        return;
-    }
-
-    const loadingElement = document.getElementById('profile-loading');
-    const errorElement = document.getElementById('profile-error');
-    const profileNameElement = document.getElementById('profile-name');
-    const profileAvatarElement = document.getElementById('profile-avatar');
-    const profileBioElement = document.getElementById('profile-bio');
-    const profileBannerElement = document.getElementById('profile-banner');
-
-    const profilePostsCountElement = document.getElementById('profile-posts-count');
-    const profileFollowersCountElement = document.getElementById('profile-followers-count');
-    const profileFollowingCountElement = document.getElementById('profile-following-count');
-
-    const postsContainer = document.getElementById('posts-container');
-
-    loadingElement.style.display = 'block'; // Show loading element
-
-    // Clear previous profile information and posts
-    profileNameElement.textContent = '';
-    profileAvatarElement.src = ''; 
-    profileAvatarElement.alt = '';
-    profileBioElement.textContent = '';
-    profileBannerElement.src = '';
-    profileBannerElement.alt = '';
-    profilePostsCountElement.textContent = '0'; 
-    profileFollowersCountElement.textContent = '0'; 
-    profileFollowingCountElement.textContent = '0'; 
-    postsContainer.innerHTML = ''; // Clear previous posts
+// Function to handle author click
+async function handleAuthorClick(authorName) {
+    const token = localStorage.getItem('accessToken'); // Get the token from local storage
 
     try {
-        // Fetch User Profile
-        const profileResponse = await getUserProfile(targetUsername, accessToken); 
+        const response = await fetch(`https://v2.api.noroff.dev/social/profiles/${authorName}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`, // Include the bearer token here
+                'X-Noroff-API-Key': API_KEY, // Include your API key if required
+            }
+        });
 
-        if (!profileResponse) throw new Error('Profile not found.');
-
-        // Display Profile Information
-        profileNameElement.textContent = profileResponse.name || 'No name provided';
-        profileAvatarElement.src = profileResponse.avatar?.url || 'default-avatar.png'; // Default avatar
-        profileAvatarElement.alt = profileResponse.avatar?.alt || 'Default avatar';
-        profileBioElement.textContent = profileResponse.bio || 'No bio available';
-        profileBannerElement.src = profileResponse.banner?.url || 'default-banner.png'; // Default banner
-        profileBannerElement.alt = profileResponse.banner?.alt || 'Default banner';
-
-        // Update profile statistics
-        profilePostsCountElement.textContent = profileResponse._count.posts || 0; 
-        profileFollowersCountElement.textContent = profileResponse._count.followers || 0; 
-        profileFollowingCountElement.textContent = profileResponse._count.following || 0; 
-
-        // Fetch and display posts from User Profile
-        const userPosts = await fetchUserPostsByProfile(targetUsername, accessToken);
-        if (userPosts.length > 0) {
-            userPosts.forEach(post => {
-                const postElement = document.createElement('div');
-                postElement.classList.add('post');
-
-                // Create a link for the post that redirects to details.html with postId as a query parameter
-                postElement.innerHTML = `
-                    <div class="post-header">
-                        <img src="${profileResponse.avatar?.url || 'default-avatar.png'}" alt="${profileResponse.avatar?.alt || 'User Avatar'}" class="post-avatar">
-                        <h4>${profileResponse.name}</h4>
-                        <p><small>Posted on: ${new Date(post.created).toLocaleDateString()}</small></p>
-                    </div>
-                    <h4><a href="details.html?postId=${post.id}">${post.title || 'Untitled Post'}</a></h4>  <!-- Link to details -->
-                    ${post.media ? `<img src="${post.media.url}" alt="${post.media.alt || 'Post Image'}" class="post-image">` : ''}
-                    <p>${post.body || 'No content available'}</p>
-                    <div class="post-tags">
-                        ${post.tags.map(tag => `<span class="post-tag">${tag}</span>`).join('')}
-                    </div>
-                    <p><strong>${post._count.comments} Comments | ${post._count.reactions} Reactions</strong></p>
-                    <button class="delete-post" data-id="${post.id}">Delete Post</button> <!-- Delete button -->
-                `;
-
-                // Add event listener for delete button
-                postElement.querySelector('.delete-post').addEventListener('click', async () => {
-                    try {
-                        await deletePost(post.id, accessToken);
-                        alert("Post deleted successfully.");
-                        showUserProfile(); // Refresh to show updated posts
-                    } catch (error) {
-                        console.error('Error deleting post:', error);
-                        alert('Error deleting post. Please try again later.');
-                    }
-                });
-
-                postsContainer.appendChild(postElement);
-            });
-        } else {
-            postsContainer.innerHTML = '<p>No posts available from this user.</p>';
+        if (!response.ok) {
+            throw new Error(`Failed to fetch author profile: ${response.status} ${response.statusText}`);
         }
 
+        const authorProfile = await response.json();
+        console.log('Author Profile:', authorProfile.data);
+
+        // Redirect to user.html with author's name as a query parameter
+        window.location.href = `user.html?username=${encodeURIComponent(authorProfile.data.name)}`;
+
     } catch (error) {
-        errorElement.textContent = 'Error loading profile data. Please try again later.';
-    } finally {
-        loadingElement.style.display = 'none'; // Hide loading element
+        console.error('Error fetching author profile:', error.message);
     }
 }
 
-// Call this function when the page loads
-document.addEventListener('DOMContentLoaded', showUserProfile);
+// Function to display post details
+async function displayPostDetails() {
+    const token = localStorage.getItem('accessToken'); // Get token from localStorage
+    const postId = getPostIdFromUrl(); // Get the post ID from URL
+    const username = localStorage.getItem('username'); // Get username from local storage
+
+    if (!token) {
+        console.error('No access token found. Please log in first.');
+        return;
+    }
+
+    if (!postId) {
+        document.getElementById('post-details').innerHTML = '<p>No post ID found in the URL.</p>';
+        return;
+    }
+
+    if (!username) {
+        console.error('No username found in local storage.');
+        return;
+    }
+
+    try {
+        // Fetch post details including comments, reactions, and author
+        const response = await fetch(`https://v2.api.noroff.dev/social/posts/${postId}?_comments=true&_reactions=true&_author=true`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'X-Noroff-API-Key': API_KEY,
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch post details: ${response.status} ${response.statusText}`);
+        }
+
+        const post = await response.json();
+        
+        // Check if the post exists
+        if (!post.data) {
+            document.getElementById('post-details').innerHTML = '<p>Post not found.</p>';
+            return;
+        }
+
+        const author = post.data.author || {};
+        const authorName = author.name || 'Unknown'; // Fallback if name is undefined
+
+        // Generate HTML content for the post details
+        const postHtml = `
+            <div class="post">
+                <h2>${post.data.title}</h2>
+                <p>${post.data.body}</p>
+                ${post.data.media ? `<img src="${post.data.media.url}" alt="${post.data.media.alt}" style="max-width:100%;">` : ''}
+                <p>Tags: ${post.data.tags.join(', ')}</p>
+                <p>Created: ${new Date(post.data.created).toLocaleString()}</p>
+                <p>Author: <a href="#" id="author-link">${authorName}</a></p>
+                ${author.avatar ? `<img src="${author.avatar.url}" alt="${author.avatar.alt}" style="width: 50px; height: 50px; border-radius: 50%;">` : ''}
+                <p>Comments: ${post.data._count.comments}</p>
+                <p>Reactions:</p>
+                <ul id="reaction-list">
+                    ${post.data.reactions.map(reaction => `
+                        <li>${reaction.symbol}: ${reaction.count} (${reaction.reactors.join(', ')})</li>
+                    `).join('')}
+                </ul>
+                <div id="reaction-section">
+                    <button class="reaction-btn" data-symbol="👍">👍</button>
+                    <button class="reaction-btn" data-symbol="❤️">❤️</button>
+                    <button class="reaction-btn" data-symbol="😂">😂</button>
+                    <button class="reaction-btn" data-symbol="😮">😮</button>
+                    <button class="reaction-btn" data-symbol="😢">😢</button>
+                    <button class="reaction-btn" data-symbol="😡">😡</button>
+                </div>
+            </div>
+            <h3>Comments</h3>
+            <div id="comments-section"></div>
+            <form id="comment-form">
+                <textarea id="comment-body" placeholder="Add a comment..."></textarea>
+                <button type="submit">Submit Comment</button>
+            </form>
+        `;
+
+        // Insert the post details into the DOM
+        document.getElementById('post-details').innerHTML = postHtml;
+
+        // Add event listener for author link
+        document.getElementById('author-link').addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent default link behavior
+            handleAuthorClick(authorName); // Call the function with the author's name
+        });
+
+        // Fetch and display comments for the post
+        const comments = post.data.comments || [];
+        await displayComments(comments, postId, token); // Pass the postId and token
+
+        // Set up the comment form submission event
+        document.getElementById('comment-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await handleCommentSubmit(postId, token);
+        });
+
+        // Set up reaction buttons
+        document.querySelectorAll('.reaction-btn').forEach(button => {
+            button.addEventListener('click', async (e) => {
+                const symbol = e.target.dataset.symbol; // Get the emoji symbol from the button
+                await handleReaction(postId, symbol, token); // Call the handleReaction function
+            });
+        });
+
+    } catch (error) {
+        console.error('Error fetching post details:', error.message);
+        document.getElementById('post-details').innerHTML = '<p>Error fetching post details.</p>';
+    }
+}
+
+// Function to display comments for a post
+async function displayComments(comments, postId, token) {
+    try {
+        if (!comments.length) {
+            document.getElementById('comments-section').innerHTML = '<p>No comments available.</p>';
+            return;
+        }
+
+        const commentsHtml = comments.map(comment => `
+            <div class="comment" id="comment-${comment.id}">
+                <p><strong>${comment.author?.name || comment.owner}</strong>: ${comment.body}</p>
+                ${comment.author?.avatar ? `<img src="${comment.author.avatar.url}" alt="${comment.author.avatar.alt}" style="width: 30px; height: 30px; border-radius: 50%;">` : ''}
+                <p><small>Posted on: ${new Date(comment.created).toLocaleString()}</small></p>
+                <button class="delete-comment-btn" data-comment-id="${comment.id}">Delete</button>
+            </div>
+        `).join('');
+
+        document.getElementById('comments-section').innerHTML = commentsHtml;
+
+        // Add delete functionality to each delete button
+        document.querySelectorAll('.delete-comment-btn').forEach(button => {
+            button.addEventListener('click', async (e) => {
+                const commentId = e.target.dataset.commentId;
+                await handleCommentDelete(postId, commentId, token); // Ensure postId is defined
+            });
+        });
+
+    } catch (error) {
+        console.error('Error displaying comments:', error.message);
+        document.getElementById('comments-section').innerHTML = '<p>Error loading comments.</p>';
+    }
+}
+
+// Function to handle submitting a new comment
+async function handleCommentSubmit(postId, token) {
+    const commentBody = document.getElementById('comment-body').value;
+
+    if (!commentBody.trim()) {
+        alert('Comment cannot be empty!');
+        return;
+    }
+
+    try {
+        await addComment(postId, commentBody, token);
+        document.getElementById('comment-body').value = ''; // Clear the textarea
+        await displayPostDetails(); // Refresh the post details and comments
+    } catch (error) {
+        console.error('Error adding comment:', error.message);
+    }
+}
+
+// Function to handle deleting a comment
+async function handleCommentDelete(postId, commentId, token) {
+    try {
+        await deleteComment(postId, commentId, token);
+        document.getElementById(`comment-${commentId}`).remove(); // Remove the comment from the DOM
+    } catch (error) {
+        console.error('Error deleting comment:', error.message);
+    }
+}
+
+// Function to handle submitting a reaction
+async function handleReaction(postId, symbol, token) {
+    try {
+        const response = await fetch(`https://v2.api.noroff.dev/social/posts/${postId}/react/${encodeURIComponent(symbol)}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'X-Noroff-API-Key': API_KEY,
+            }
+        });
+
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            throw new Error(`Failed to add reaction: ${response.status} ${response.statusText} - ${errorResponse.message || 'No additional error message'}`);
+        }
+
+        const reactionData = await response.json();
+        console.log('Reaction added:', reactionData);
+        await displayPostDetails(); // Refresh the post details and reactions
+    } catch (error) {
+        console.error('Error adding reaction:', error.message);
+    }
+}
+
+// Call displayPostDetails on page load
+document.addEventListener('DOMContentLoaded', displayPostDetails);
