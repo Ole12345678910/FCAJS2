@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Details</title>
-    <link rel="stylesheet" href="/css/style.css"> <!-- Link to your CSS file -->
+    <title>User Profile</title>
+    <link rel="stylesheet" href="/css/style.css"> <!-- Ensure this points to your CSS -->
 </head>
 <body>
-    <div id="user-details"></div>
-    <div id="post-details"></div>
-    <div id="profile-details"></div>
-    <div id="user-profile"></div>
-    <div id="user-posts"></div>
-    <script defer type="module" src="js/profile.js"></script> <!-- Link to your JavaScript file -->
+    <div class="container">
+      <div id="post-details"></div> <!-- Make sure this element exists -->
+
+        <div id="profile-container"></div> <!-- This is the profile container -->
+        <div id="posts-container"></div> <!-- This will hold user posts -->
+        <div id="profile-error" style="color: red;"></div> <!-- For error messages -->
+    </div>
+    <script type="module" src="/js/profile.js"></script> <!-- Ensure this points to your JS file -->
 </body>
 </html>
