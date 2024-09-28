@@ -1,6 +1,5 @@
-import { fetchPosts, fetchPostsFromFollowers } from './api.js'; // Ensure this path is correct
+import { fetchPosts, searchProfiles, searchPosts } from './api.js'; // Ensure this path is correct
 
-let isFollowerView = false; // Track whether to show only followers' posts
 let allPosts = []; // Store all fetched posts for searching
 
 // Function to render posts
@@ -28,7 +27,7 @@ function renderPosts(posts) {
     postsContainer.innerHTML = postsHtml; // Set the inner HTML of the posts container
 }
 
-// Function to fetch all posts regardless of follower status
+// Function to fetch all posts
 async function fetchAllPosts() {
     const token = localStorage.getItem('accessToken'); // Retrieve token
 
@@ -43,6 +42,7 @@ async function fetchAllPosts() {
         return allPosts; // Return all posts
     } catch (error) {
         console.error('Error fetching posts:', error.message);
+        alert('Failed to fetch posts. Please try again later.'); // User feedback on error
         return [];
     }
 }
@@ -53,11 +53,9 @@ async function displayPosts(searchQuery = '') {
 
     // If there's a search query, filter the posts
     if (searchQuery) {
-        const filteredPosts = posts.filter(post => 
-            post.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-            post.body.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-        renderPosts(filteredPosts); // Render filtered posts
+        const token = localStorage.getItem('accessToken'); // Get token
+        const searchedPosts = await searchPosts(token, searchQuery); // Search for posts
+        renderPosts(searchedPosts.data); // Render searched posts
     } else {
         renderPosts(posts); // Render all posts if no search query
     }
@@ -72,43 +70,15 @@ function debounce(func, delay) {
     };
 }
 
-// Set up the filter button
-function setupFilterButton() {
-    const filterButton = document.createElement('button');
-    filterButton.id = 'filter-followers-btn';
-    filterButton.style.margin = '20px 0';
-    filterButton.innerText = 'Show Only Posts from My Followers';
-
-    // Handle the button click event
-    filterButton.addEventListener('click', async () => {
-        isFollowerView = !isFollowerView; // Toggle the view state
-        filterButton.innerText = isFollowerView ? 'Show All Posts' : 'Show Only Posts from My Followers'; // Update button text
-        
-        // Show a loading message
-        const postsContainer = document.getElementById('posts-container');
-        postsContainer.innerHTML = '<p>Loading posts...</p>';
-
-        if (isFollowerView) {
-            const token = localStorage.getItem('accessToken');
-            if (token) {
-                const followerPosts = await fetchPostsFromFollowers(token);
-                renderPosts(followerPosts);
-            } else {
-                console.error('No access token found. Please log in first.');
-                postsContainer.innerHTML = '<p>Please log in to see follower posts.</p>';
-            }
-        } else {
-            await displayPosts(); // Refresh to show all posts
-        }
-    });
-
-    document.getElementById('button-container').appendChild(filterButton); // Append the button to the DOM
-}
-
 // Set up the search functionality
 function setupSearch() {
     const searchInput = document.getElementById('search-query'); // Get search input element
     
+    if (!searchInput) {
+        console.error('Search input element not found');
+        return;
+    }
+
     // Handle the input event for real-time searching with debounce
     searchInput.addEventListener('input', debounce(async () => {
         const query = searchInput.value.trim(); // Get the trimmed search input value
@@ -117,11 +87,10 @@ function setupSearch() {
     }, 300)); // 300ms delay
 }
 
-// Function to initialize the app
+// Set up the app
 async function initApp() {
     await displayPosts(); // Display posts on initial load
     setupSearch(); // Set up search functionality
-    setupFilterButton(); // Set up filter button functionality
 }
 
 // Run the app
