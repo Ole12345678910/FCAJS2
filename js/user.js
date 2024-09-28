@@ -8,7 +8,7 @@ function getUsernameFromUrl() {
 
 // Function to fetch user profile by username
 async function fetchUserProfile(username, token) {
-    const response = await fetch(`https://v2.api.noroff.dev/social/profiles/${username}`, {
+    const response = await fetch(`https://v2.api.noroff.dev/social/profiles/${username}?_following=true&_followers=true&_posts=true`, {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -23,9 +23,9 @@ async function fetchUserProfile(username, token) {
     return await response.json(); // Return the JSON response
 }
 
-// Function to fetch posts by username
+// Function to fetch user posts by username
 async function fetchUserPosts(username, token) {
-    const response = await fetch(`https://v2.api.noroff.dev/social/posts?author=${username}`, {
+    const response = await fetch(`https://v2.api.noroff.dev/social/profiles/${username}/posts`, {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -38,6 +38,87 @@ async function fetchUserPosts(username, token) {
     }
 
     return await response.json(); // Return the JSON response
+}
+
+// Function to check if the logged-in user is following the specified user
+async function isUserFollowed(username, token) {
+    try {
+        const response = await fetch(`https://v2.api.noroff.dev/social/profiles/me/following`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'X-Noroff-API-Key': API_KEY,
+            },
+        });
+
+        if (!response.ok) {
+            console.error('Failed to fetch following users:', response.status);
+            return false;
+        }
+
+        const followingData = await response.json();
+        // Check if the username exists in the following list
+        return followingData.data.some(user => user.name === username);
+    } catch (error) {
+        console.error('Error checking if user is followed:', error.message);
+        return false;
+    }
+}
+
+// Function to follow a user
+async function followUser(token, username) {
+    try {
+        const response = await fetch(`https://v2.api.noroff.dev/social/profiles/${username}/follow`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'X-Noroff-API-Key': API_KEY,
+                'Content-Type': 'application/json',
+            },
+        });
+
+        const responseBody = await response.json();
+
+        if (!response.ok) {
+            console.error('Failed to follow user:', responseBody);
+            alert(`Error: ${responseBody.errors ? responseBody.errors.map(e => e.message).join(', ') : 'Unknown error occurred.'}`);
+        } else {
+            console.log('Successfully followed user:', responseBody.data);
+            alert('You are now following this user!');
+            window.location.reload(); // Refresh the page to show updated state
+        }
+    } catch (error) {
+        console.error('Error following user:', error.message);
+        alert(`Error: ${error.message}`);
+    }
+}
+
+// Function to unfollow a user
+async function unfollowUser(token, username) {
+    try {
+        const response = await fetch(`https://v2.api.noroff.dev/social/profiles/${username}/unfollow`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'X-Noroff-API-Key': API_KEY,
+                'Content-Type': 'application/json',
+            },
+        });
+
+        const responseBody = await response.json();
+
+        if (!response.ok) {
+            console.error('Failed to unfollow user:', responseBody);
+            alert(`Error: ${responseBody.errors ? responseBody.errors.map(e => e.message).join(', ') : 'Unknown error occurred.'}`);
+        } else {
+            console.log('Successfully unfollowed user:', responseBody.data);
+            alert('You have unfollowed this user!');
+            window.location.reload(); // Refresh the page to show updated state
+        }
+    } catch (error) {
+        console.error('Error unfollowing user:', error.message);
+        alert(`Error: ${error.message}`);
+    }
 }
 
 // Function to display user profile details and posts
@@ -58,11 +139,7 @@ async function displayUserProfile() {
 
     try {
         const userProfile = await fetchUserProfile(username, token); // Fetch user profile data
-        const userPosts = await fetchUserPosts(username, token); // Fetch user posts data
-
-        // Log the username and posts data
-        console.log('Fetching posts for user:', username);
-        console.log('User Posts Response:', userPosts); // Log user posts response
+        const userPosts = await fetchUserPosts(username, token); // Fetch user posts
 
         // Ensure we have a valid user profile
         if (!userProfile.data) {
@@ -82,30 +159,51 @@ async function displayUserProfile() {
             <div class="banner-container">
                 <img src="${userProfile.data.banner.url}" alt="${userProfile.data.banner.alt}" style="width: 100%; height: auto;">
             </div>
+            <div id="follow-unfollow-buttons">
+                <button id="follow-button">Follow</button>
+                <button id="unfollow-button">Unfollow</button>
+            </div>
         `;
+
+        // Display profile information
         document.getElementById('user-profile').innerHTML = profileHtml;
 
-        // Ensure we have valid user posts
-        if (userPosts.data && userPosts.data.length > 0) {
-            const postsHtml = userPosts.data.map(post => `
-                <div class="post">
-                    <h3>${post.title}</h3>
-                    <p>${post.body}</p>
-                    <p><strong>Created on:</strong> ${new Date(post.created).toLocaleString()}</p>
-                    <p><strong>Tags:</strong> ${post.tags.join(', ')}</p>
-                </div>
-            `).join('');
+        // Display user posts with additional details
+        const postsHtml = userPosts.data.length ? `
+            <h2>Posts</h2>
+            <div id="user-posts">
+                ${userPosts.data.map(post => `
+                    <div class="post">
+                        <h3><a href="details.html?postId=${post.id}">${post.title}</a></h3> <!-- Link to details page -->
+                        <p>${post.body}</p>
+                        ${post.media ? `<img src="${post.media.url}" alt="${post.media.alt}" style="max-width:100%;">` : ''}
+                        <p>Tags: ${post.tags ? post.tags.join(', ') : 'None'}</p>
+                        <p>Created: ${new Date(post.created).toLocaleString()}</p>
+                        <p>Comments: ${post._count ? post._count.comments : 0}</p> <!-- Display comment count -->
+                        <p>Reactions: ${post._count ? post._count.reactions : 0}</p> <!-- Display reaction count -->
+                        <p>Author: ${post.author?.name || 'Unknown'}</p> <!-- Display author name -->
+                        ${post.author?.avatar ? `<img src="${post.author.avatar.url}" alt="${post.author.avatar.alt}" style="width: 50px; height: 50px; border-radius: 50%;">` : ''} <!-- Display author avatar -->
+                    </div>
+                `).join('')}
+            </div>
+        ` : '<p>No posts available.</p>';
 
-            document.getElementById('user-posts').innerHTML = `<h2>User Posts</h2>${postsHtml}`;
-        } else {
-            document.getElementById('user-posts').innerHTML = '<p>No posts available for this user.</p>';
-        }
+        document.getElementById('user-posts').innerHTML = postsHtml; // Display posts in the 'user-posts' container
+
+        // Always show both buttons
+        document.getElementById('follow-button').style.display = 'inline';  // Ensure Follow button is shown
+        document.getElementById('unfollow-button').style.display = 'inline'; // Ensure Unfollow button is shown
+
+        // Add event listeners to both buttons
+        document.getElementById('follow-button').addEventListener('click', () => followUser(token, username));
+        document.getElementById('unfollow-button').addEventListener('click', () => unfollowUser(token, username));
 
     } catch (error) {
         console.error('Error fetching user profile:', error.message);
         document.getElementById('user-profile').innerHTML = '<p>Error loading user profile.</p>';
     }
 }
+
 
 // Call displayUserProfile when the page loads
 window.onload = displayUserProfile; // Ensure this function runs on page load
