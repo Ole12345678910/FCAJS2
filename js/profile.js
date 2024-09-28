@@ -1,5 +1,5 @@
 // profile.js
-import { getUserProfile, fetchUserPostsByProfile, deletePost, API_KEY } from './api.js'; // Adjust path as necessary
+import { getUserProfile, fetchUserPostsByProfile, deletePost, updatePost, API_KEY } from './api.js';
 
 // Function to get username from localStorage
 function getUsernameFromStorage() {
@@ -61,7 +61,7 @@ async function displayUserPosts(username, token) {
         }
 
         for (const post of userPosts) {
-            const postElement = createPostElement(post); // Updated to no longer fetch comments or reactions
+            const postElement = createPostElement(post);
             postsContainer.appendChild(postElement);
         }
     } catch (error) {
@@ -90,6 +90,8 @@ function createPostElement(post) {
         </div>
         <p><strong>${post._count.comments} Comments | ${post._count.reactions} Reactions</strong></p>
         <button class="delete-post" data-id="${post.id}">Delete Post</button>
+        <button class="edit-post" data-id="${post.id}" data-title="${post.title}" data-body="${post.body}" data-tags="${post.tags.join(', ')}" data-media-url="${post.media?.url || ''}" data-media-alt="${post.media?.alt || ''}">Edit Post</button>
+        <div id="edit-form-container-${post.id}" class="edit-form-container"></div> <!-- Unique edit form container -->
     `;
 
     // Add event listener for delete button
@@ -97,8 +99,78 @@ function createPostElement(post) {
         await handlePostDelete(post.id);
     });
 
+    // Add event listener for edit button
+    postElement.querySelector('.edit-post').addEventListener('click', (e) => {
+        const { id, title, body, tags, mediaUrl, mediaAlt } = e.target.dataset;
+        showEditForm(id, title, body, tags, mediaUrl, mediaAlt);
+    });
+
     return postElement;
 }
+
+// Function to display the edit form
+function showEditForm(id, title, body, tags, mediaUrl, mediaAlt) {
+    const editFormContainer = document.getElementById(`edit-form-container-${id}`);
+    if (!editFormContainer) {
+        console.error(`Edit form container not found for post ID: ${id}`);
+        return;
+    }
+
+    editFormContainer.innerHTML = `
+        <form id="edit-post-form-${id}">
+            <h3>Edit Post</h3>
+            <label for="post-title">Title:</label>
+            <input type="text" id="post-title-${id}" value="${title}">
+            <label for="post-body">Body:</label>
+            <textarea id="post-body-${id}">${body}</textarea>
+            <label for="post-tags">Tags (comma separated):</label>
+            <input type="text" id="post-tags-${id}" value="${tags}">
+            <label for="post-media-url">Media URL:</label>
+            <input type="text" id="post-media-url-${id}" value="${mediaUrl}">
+            <label for="post-media-alt">Media Alt Text:</label>
+            <input type="text" id="post-media-alt-${id}" value="${mediaAlt}">
+            <button type="submit">Update Post</button>
+        </form>
+    `;
+
+    document.getElementById(`edit-post-form-${id}`).addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const updatedPost = {
+            title: document.getElementById(`post-title-${id}`).value,
+            body: document.getElementById(`post-body-${id}`).value,
+            tags: document.getElementById(`post-tags-${id}`).value.split(',').map(tag => tag.trim()),
+            media: {
+                url: document.getElementById(`post-media-url-${id}`).value,
+                alt: document.getElementById(`post-media-alt-${id}`).value
+            }
+        };
+
+        await handlePostUpdate(id, updatedPost);
+    });
+}
+// Function to handle updating a post
+async function handlePostUpdate(postId, updatedPost) {
+    const token = localStorage.getItem('accessToken');
+
+    try {
+        const response = await updatePost(postId, updatedPost, token);
+
+        // Check if response has an error
+        if (response.error) {
+            alert(`Error updating post: ${response.error.message || 'Unknown error occurred.'}`);
+            return;
+        }
+
+        alert('Post updated successfully.');
+        window.location.reload(); // Refresh the page after successful update
+    } catch (error) {
+        console.error('Error updating post:', error.message);
+        alert('Error updating post. Please try again later.');
+    }
+}
+
+
 
 // Function to handle deleting a post
 async function handlePostDelete(postId) {
@@ -114,5 +186,5 @@ async function handlePostDelete(postId) {
     }
 }
 
-// Call displayUserProfile on page load
-document.addEventListener('DOMContentLoaded', displayUserProfile);
+// Run the function to display the user profile on page load
+displayUserProfile();

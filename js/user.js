@@ -11,8 +11,8 @@ async function fetchUserProfile(username, token) {
     const response = await fetch(`https://v2.api.noroff.dev/social/profiles/${username}`, {
         method: 'GET',
         headers: {
-            'Authorization': `Bearer ${token}`, // Include the bearer token
-            'X-Noroff-API-Key': API_KEY, // Include your API key if required
+            'Authorization': `Bearer ${token}`,
+            'X-Noroff-API-Key': API_KEY,
         }
     });
 
@@ -23,7 +23,7 @@ async function fetchUserProfile(username, token) {
     return await response.json(); // Return the JSON response
 }
 
-// Function to fetch posts by user
+// Function to fetch posts by username
 async function fetchUserPosts(username, token) {
     const response = await fetch(`https://v2.api.noroff.dev/social/posts?author=${username}`, {
         method: 'GET',
@@ -47,6 +47,7 @@ async function displayUserProfile() {
 
     if (!token) {
         console.error('No access token found. Please log in first.');
+        document.getElementById('user-profile').innerHTML = '<p>Please log in to view profiles.</p>';
         return;
     }
 
@@ -59,6 +60,10 @@ async function displayUserProfile() {
         const userProfile = await fetchUserProfile(username, token); // Fetch user profile data
         const userPosts = await fetchUserPosts(username, token); // Fetch user posts data
 
+        // Log the username and posts data
+        console.log('Fetching posts for user:', username);
+        console.log('User Posts Response:', userPosts); // Log user posts response
+
         // Ensure we have a valid user profile
         if (!userProfile.data) {
             document.getElementById('user-profile').innerHTML = '<p>User not found.</p>';
@@ -67,19 +72,17 @@ async function displayUserProfile() {
 
         // Construct the HTML to display user profile information
         const profileHtml = `
-        <h1>${userProfile.data.name}</h1>
-        <img src="${userProfile.data.avatar.url}" alt="${userProfile.data.avatar.alt}" style="width: 150px; height: 150px; border-radius: 50%;">
-        <p>Email: ${userProfile.data.email}</p>
-        <p>Bio: ${userProfile.data.bio || 'No bio available'}</p>
-        <p>Posts: ${userProfile.data._count.posts}</p>
-        <p>Followers: ${userProfile.data._count.followers}</p>
-        <p>Following: ${userProfile.data._count.following}</p>
-        <div class="banner-container">
-            <img src="${userProfile.data.banner.url}" alt="${userProfile.data.banner.alt}" style="width: 100%; height: auto;">
-        </div>
+            <h1>${userProfile.data.name}</h1>
+            <img src="${userProfile.data.avatar.url}" alt="${userProfile.data.avatar.alt}" style="width: 150px; height: 150px; border-radius: 50%;">
+            <p>Email: ${userProfile.data.email}</p>
+            <p>Bio: ${userProfile.data.bio || 'No bio available'}</p>
+            <p>Posts: ${userProfile.data._count.posts}</p>
+            <p>Followers: ${userProfile.data._count.followers}</p>
+            <p>Following: ${userProfile.data._count.following}</p>
+            <div class="banner-container">
+                <img src="${userProfile.data.banner.url}" alt="${userProfile.data.banner.alt}" style="width: 100%; height: auto;">
+            </div>
         `;
-
-        // Insert the profile HTML into the user profile section
         document.getElementById('user-profile').innerHTML = profileHtml;
 
         // Ensure we have valid user posts

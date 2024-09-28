@@ -105,6 +105,38 @@ loginAndFetchPosts(email, password);
 // api.js
 export const API_KEY = "a359f87a-47df-408e-ac4e-a6490a77b19c";
 
+const API_BASE_URL = "https://v2.api.noroff.dev";
+
+// Update a specific post
+export async function updatePost(postId, updatedPost, token) {
+  try {
+      const response = await fetch(`https://v2.api.noroff.dev/social/posts/${postId}`, {
+          method: 'PUT',
+          headers: {
+              'Authorization': `Bearer ${token}`,
+              'X-Noroff-API-Key': API_KEY, // Ensure the API key is included
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updatedPost)
+      });
+
+      // Log the entire response for debugging
+      console.log('Response from updatePost:', response);
+
+      if (!response.ok) {
+          const errorResponse = await response.json(); // Ensure you fetch the JSON error response
+          console.error('Error updating post:', errorResponse);
+          return { status: response.status, error: errorResponse }; // Return status and error
+      }
+
+      return { status: response.status, data: await response.json() }; // Return status and data
+  } catch (error) {
+      console.error('Error making update request:', error.message);
+      throw error;
+  }
+}
+
+
 // Function to log in the user
 export const loginUser = async (email, password) => {
     const response = await fetch('https://v2.api.noroff.dev/auth/login', {
