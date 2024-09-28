@@ -107,36 +107,6 @@ export const API_KEY = "a359f87a-47df-408e-ac4e-a6490a77b19c";
 
 const API_BASE_URL = "https://v2.api.noroff.dev";
 
-// Update a specific post
-export async function updatePost(postId, updatedPost, token) {
-  try {
-      const response = await fetch(`https://v2.api.noroff.dev/social/posts/${postId}`, {
-          method: 'PUT',
-          headers: {
-              'Authorization': `Bearer ${token}`,
-              'X-Noroff-API-Key': API_KEY, // Ensure the API key is included
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(updatedPost)
-      });
-
-      // Log the entire response for debugging
-      console.log('Response from updatePost:', response);
-
-      if (!response.ok) {
-          const errorResponse = await response.json(); // Ensure you fetch the JSON error response
-          console.error('Error updating post:', errorResponse);
-          return { status: response.status, error: errorResponse }; // Return status and error
-      }
-
-      return { status: response.status, data: await response.json() }; // Return status and data
-  } catch (error) {
-      console.error('Error making update request:', error.message);
-      throw error;
-  }
-}
-
-
 // Function to log in the user
 export const loginUser = async (email, password) => {
     const response = await fetch('https://v2.api.noroff.dev/auth/login', {
@@ -161,118 +131,73 @@ export const loginUser = async (email, password) => {
     return token;
 };
 
-export async function fetchPosts(token) {
-  const response = await fetch(`https://v2.api.noroff.dev/social/posts?_author=true`, {
+
+
+
+
+// Function to search posts
+export async function searchPosts(token, query) {
+  const response = await fetch(`${API_BASE_URL}/social/posts/search?q=${encodeURIComponent(query)}&_author=true`, {
       method: 'GET',
       headers: {
           'Authorization': `Bearer ${token}`,
-          'X-Noroff-API-Key': API_KEY,
+          'X-Noroff-API-Key': API_KEY
       }
   });
 
   if (!response.ok) {
-      throw new Error('Failed to fetch posts');
+      throw new Error('Failed to search posts');
   }
 
-  const data = await response.json();
-  return data.data; // Ensure this returns an array of posts
+  return await response.json();
+}
+
+// Function to update a post
+export async function updatePost(postId, updatedPost, token) {
+  try {
+      const response = await fetch(`${API_BASE_URL}/social/posts/${postId}`, {
+          method: 'PUT',
+          headers: {
+              'Authorization': `Bearer ${token}`,
+              'X-Noroff-API-Key': API_KEY,
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updatedPost)
+      });
+
+      if (!response.ok) {
+          const errorResponse = await response.json();
+          console.error('Error updating post:', errorResponse);
+          return { status: response.status, error: errorResponse };
+      }
+
+      return { status: response.status, data: await response.json() };
+  } catch (error) {
+      console.error('Error making update request:', error.message);
+      throw error;
+  }
 }
 
 // Function to fetch user profile by username
 export const getUserProfile = async (username, accessToken) => {
-    const response = await fetch(`https://v2.api.noroff.dev/social/profiles/${username}`, {
+    const response = await fetch(`${API_BASE_URL}/social/profiles/${username}`, {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
+            'Authorization': `Bearer ${accessToken}`,
             'X-Noroff-API-Key': API_KEY,
         },
     });
 
-    if (response.status === 401) {
-        throw new Error('Unauthorized access. Please check your token.');
-    }
-
     if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`Failed to fetch profile for ${username}`);
     }
 
-    const profileData = await response.json();
-    return profileData.data;
+    const data = await response.json();
+    return data.data; // Return profile data
 };
 
-// Function to fetch posts made by a specific user profile
-export const fetchUserPostsByProfile = async (username, accessToken) => {
-    const response = await fetch(`https://v2.api.noroff.dev/social/profiles/${username}/posts`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-            'X-Noroff-API-Key': API_KEY,
-        },
-    });
-
-    if (response.status === 401) {
-        throw new Error('Unauthorized access. Please check your token.');
-    }
-
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const postsData = await response.json();
-    return postsData.data;
-};
-
-// Function to delete a post
-export const deletePost = async (postId, accessToken) => {
-    const response = await fetch(`https://v2.api.noroff.dev/social/posts/${postId}`, {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-            'X-Noroff-API-Key': API_KEY,
-        },
-    });
-
-    if (response.status === 401) {
-        throw new Error('Unauthorized access. Please check your token.');
-    }
-
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    return true; // Return success
-};
-
-
-// Function to fetch all user profiles
-export const fetchAllUserProfiles = async (accessToken) => {
-  const response = await fetch('https://v2.api.noroff.dev/social/profiles', {
-      method: 'GET',
-      headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-          'X-Noroff-API-Key': API_KEY,
-      },
-  });
-
-  if (response.status === 401) {
-      throw new Error('Unauthorized access. Please check your token.');
-  }
-
-  if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-  }
-
-  const profilesData = await response.json();
-  return profilesData;
-};
-
-// Function to add a comment to a post
 export const addComment = async (postId, commentBody, token) => {
-  const response = await fetch(`https://v2.api.noroff.dev/social/posts/${postId}/comment`, {
+  const response = await fetch(`https://v2.api.noroff.dev/social/posts/${postId}/comment`, { // Singular 'comment'
       method: 'POST',
       headers: {
           'Content-Type': 'application/json',
@@ -292,9 +217,9 @@ export const addComment = async (postId, commentBody, token) => {
   return data;
 };
 
-// Function to delete a comment from a post
+
 export const deleteComment = async (postId, commentId, token) => {
-  const response = await fetch(`https://v2.api.noroff.dev/social/posts/${postId}/comment/${commentId}`, {
+  const response = await fetch(`https://v2.api.noroff.dev/social/posts/${postId}/comment/${commentId}`, { // Use singular 'comment'
       method: 'DELETE',
       headers: {
           'Authorization': `Bearer ${token}`,
@@ -308,3 +233,115 @@ export const deleteComment = async (postId, commentId, token) => {
 
   return true; // If successful, return true
 };
+
+// Function to fetch posts made by a specific user profile
+export const fetchUserPostsByProfile = async (username, accessToken) => {
+  const response = await fetch(`https://v2.api.noroff.dev/social/profiles/${username}/posts`, {
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+          'X-Noroff-API-Key': API_KEY,
+      },
+  });
+
+  if (response.status === 401) {
+      throw new Error('Unauthorized access. Please check your token.');
+  }
+
+  if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const postsData = await response.json();
+  return postsData.data; // Return the posts data
+};
+
+// Function to delete a post
+export const deletePost = async (postId, accessToken) => {
+  const response = await fetch(`https://v2.api.noroff.dev/social/posts/${postId}`, {
+      method: 'DELETE',
+      headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+          'X-Noroff-API-Key': API_KEY,
+      },
+  });
+
+  if (response.status === 401) {
+      throw new Error('Unauthorized access. Please check your token.');
+  }
+
+  if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return true; // Return success if the delete was successful
+};
+
+
+export async function searchProfiles(token, query) {
+    const response = await fetch(`http://your-api-endpoint/social/profiles/search?q=${encodeURIComponent(query)}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error fetching profiles: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data; // Return the array of profiles found
+}
+
+
+// Function to fetch all posts
+export async function fetchPosts(token) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/social/posts?_author=true`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'X-Noroff-API-Key': API_KEY,
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch posts');
+        }
+
+        const data = await response.json();
+        return data.data; // Ensure this returns an array of posts
+    } catch (error) {
+        console.error('Error fetching posts:', error.message);
+        throw error; // Rethrow to handle in the UI
+    }
+}
+
+// Function to fetch posts from people the user follows
+export async function fetchPostsFromFollowers(token) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/social/posts/following?_author=true`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'X-Noroff-API-Key': API_KEY,
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch posts from followers');
+        }
+
+        const data = await response.json();
+        return data.data; // Ensure this returns an array of posts
+    } catch (error) {
+        console.error('Error fetching follower posts:', error.message);
+        throw error; // Rethrow to handle in the UI
+    }
+}
+
+// Other functions remain unchanged for brevity...

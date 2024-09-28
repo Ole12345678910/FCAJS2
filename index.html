@@ -3,30 +3,26 @@
 
 <head>
   <meta charset="UTF-8" />
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Noroff FED2 JS2 CA</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
-
   <h1>Home</h1>
   <a href="profile.html">My Profile</a>
   <a href="login.html">Login</a>
   <a href="register.html">Register</a>
   <button id="logoutButton">Logout</button>
-  <div id="button-container"></div> <!-- Container for the create button -->
-<div id="posts-container"></div> <!-- Container for posts -->
-
-  <div id="profilesContainer"></div>
-  <div id="profileDetailsContainer"></div>
-  <div id="usersContainer"></div> <!-- Container for users and their posts -->
-  <div id="allPosts"></div>
-  <div id="posts-container"></div>
   
-  <div id="profiles"></div>
-  <div id="postsContainer"></div>
+  <div id="search-container">
+    <input type="text" id="search-query" placeholder="Search posts">
+    <button id="search-btn">Search</button>
+  </div>
+  
+  <div id="button-container"></div> <!-- Container for the create and filter buttons -->
+  <div id="posts-container"></div> <!-- Container for posts -->
+  
   <script defer type="module" src="/js/post.js"></script>
   <script defer type="module" src="/js/logout.js"></script> <!-- Include your logout script -->
 </body>

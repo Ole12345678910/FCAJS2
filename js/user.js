@@ -181,8 +181,6 @@ async function displayUserProfile() {
                         <p>Created: ${new Date(post.created).toLocaleString()}</p>
                         <p>Comments: ${post._count ? post._count.comments : 0}</p> <!-- Display comment count -->
                         <p>Reactions: ${post._count ? post._count.reactions : 0}</p> <!-- Display reaction count -->
-                        <p>Author: ${post.author?.name || 'Unknown'}</p> <!-- Display author name -->
-                        ${post.author?.avatar ? `<img src="${post.author.avatar.url}" alt="${post.author.avatar.alt}" style="width: 50px; height: 50px; border-radius: 50%;">` : ''} <!-- Display author avatar -->
                     </div>
                 `).join('')}
             </div>

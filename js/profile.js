@@ -78,8 +78,6 @@ function createPostElement(post) {
     // Add post content
     postElement.innerHTML = `
         <div class="post-header">
-            <img src="${post.author?.avatar?.url || 'default-avatar.png'}" alt="${post.author?.avatar?.alt || 'User Avatar'}" class="post-avatar">
-            <h4>${post.author?.name || 'Unknown'}</h4>
             <p><small>Posted on: ${new Date(post.created).toLocaleDateString()}</small></p>
         </div>
         <h4><a href="details.html?postId=${post.id}" class="post-title">${post.title || 'Untitled Post'}</a></h4>
@@ -185,6 +183,24 @@ async function handlePostDelete(postId) {
         alert('Error deleting post. Please try again later.');
     }
 }
+
+
+// Function to create a link to create.html
+function createPostLink() {
+    const linkContainer = document.getElementById('create'); // Get the link container
+    const linkHtml = `
+        <a href="create.html" id="create-post-link" style="display: inline-block; margin: 20px 0; padding: 10px; background-color: #4CAF50; color: white; text-align: center; text-decoration: none; border-radius: 5px;">
+            Create New Post
+        </a>
+    `;
+    linkContainer.innerHTML += linkHtml; // Add the link HTML to the container
+}
+
+// Call this function where appropriate in your profile.js file
+window.onload = () => {
+    createPostLink(); // Create the post link when the profile page loads
+    // Other initialization code...
+};
 
 // Run the function to display the user profile on page load
 displayUserProfile();
