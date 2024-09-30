@@ -7,7 +7,7 @@ const handleLogout = () => {
     localStorage.removeItem('accessToken');
     
     // Redirect the user to the login page
-    window.location.href = '/templates/index.html';
+    window.location.href = '/index.html';
 };
 
 /**

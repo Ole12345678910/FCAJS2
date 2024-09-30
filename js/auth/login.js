@@ -20,7 +20,7 @@ const handleLogin = async (event) => {
         // Attempt to log in and retrieve access token
         const token = await loginUser(email, password); 
         // Redirect to the home page after successful login
-        window.location.href = '/templates/index.html'; 
+        window.location.href = '/index.html'; 
     } catch (error) {
         // Handle any login errors and show a message to the user
         alert('Login failed. Please check your credentials.'); 
