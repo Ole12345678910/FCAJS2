@@ -1,5 +1,3 @@
-// delete.js
-
 /**
  * Function to delete a post by its ID
  * @param {number} postId - The ID of the post to delete

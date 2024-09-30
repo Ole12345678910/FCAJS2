@@ -1,19 +1,34 @@
-// profile.js
-import { getUserProfile, fetchUserPostsByProfile, deletePost, updatePost } from '../api/api.js';
+// Import necessary API functions and utilities
+import { 
+    getUserProfile, 
+    fetchUserPostsByProfile, 
+    deletePost, 
+    updatePost 
+} from '../api/api.js';
 import { renderProfile } from '../utils/utils.js';
 
-// Function to get username from localStorage
+// Function to retrieve username from localStorage
 function getUsernameFromStorage() {
     return localStorage.getItem('username');
 }
 
-// Function to display User Profile
+/**
+ * Redirects to the login page if access token or username is missing.
+ */
+function redirectToLogin() {
+    window.location.href = '/templates/auth/login.html'; // Redirect to login page
+}
+
+/**
+ * Displays the user profile and their posts.
+ */
 async function displayUserProfile() {
     const accessToken = localStorage.getItem('accessToken');
     const username = getUsernameFromStorage();
 
+    // Check for access token and username
     if (!accessToken || !username) {
-        window.location.href = '/templates/auth/login.html'; // Redirect to login page
+        redirectToLogin();
         return;
     }
 
@@ -21,15 +36,19 @@ async function displayUserProfile() {
         const profileResponse = await getUserProfile(username, accessToken);
         if (!profileResponse) throw new Error('Profile not found.');
 
-        renderProfile(profileResponse);
-        await displayUserPosts(username, accessToken); // Fetch and display posts after rendering the profile
+        renderProfile(profileResponse); // Render the user profile
+        await displayUserPosts(username, accessToken); // Fetch and display user posts
     } catch (error) {
         console.error('Error loading profile data:', error.message);
         document.getElementById('profile-error').textContent = 'Error loading profile data.';
     }
 }
 
-// Function to display User Posts
+/**
+ * Displays posts for the specified user.
+ * @param {string} username - The username of the user whose posts to fetch.
+ * @param {string} token - The access token for API authentication.
+ */
 async function displayUserPosts(username, token) {
     const postsContainer = document.getElementById('posts-container');
 
@@ -40,17 +59,21 @@ async function displayUserPosts(username, token) {
             return;
         }
 
-        for (const post of userPosts) {
+        userPosts.forEach(post => {
             const postElement = createPostElement(post);
-            postsContainer.appendChild(postElement);
-        }
+            postsContainer.appendChild(postElement); // Append each post to the container
+        });
     } catch (error) {
         console.error('Error fetching user posts:', error.message);
         postsContainer.innerHTML = '<p>Error loading posts.</p>';
     }
 }
 
-// Function to create HTML for a single post
+/**
+ * Creates an HTML element for a single post.
+ * @param {Object} post - The post data.
+ * @returns {HTMLElement} The HTML element representing the post.
+ */
 function createPostElement(post) {
     const postElement = document.createElement('div');
     postElement.classList.add('post');
@@ -69,15 +92,11 @@ function createPostElement(post) {
         <p><strong>${post._count.comments} Comments | ${post._count.reactions} Reactions</strong></p>
         <button class="delete-post" data-id="${post.id}">Delete Post</button>
         <button class="edit-post" data-id="${post.id}" data-title="${post.title}" data-body="${post.body}" data-tags="${post.tags.join(', ')}" data-media-url="${post.media?.url || ''}" data-media-alt="${post.media?.alt || ''}">Edit Post</button>
-        <div id="edit-form-container-${post.id}" class="edit-form-container"></div> <!-- Unique edit form container -->
+        <div id="edit-form-container-${post.id}" class="edit-form-container"></div>
     `;
 
-    // Add event listener for delete button
-    postElement.querySelector('.delete-post').addEventListener('click', async () => {
-        await handlePostDelete(post.id);
-    });
-
-    // Add event listener for edit button
+    // Add event listeners for delete and edit buttons
+    postElement.querySelector('.delete-post').addEventListener('click', () => handlePostDelete(post.id));
     postElement.querySelector('.edit-post').addEventListener('click', (e) => {
         const { id, title, body, tags, mediaUrl, mediaAlt } = e.target.dataset;
         showEditForm(id, title, body, tags, mediaUrl, mediaAlt);
@@ -86,7 +105,15 @@ function createPostElement(post) {
     return postElement;
 }
 
-// Function to display the edit form
+/**
+ * Displays the edit form for a specified post.
+ * @param {string} id - The ID of the post to edit.
+ * @param {string} title - The current title of the post.
+ * @param {string} body - The current body of the post.
+ * @param {string} tags - The current tags of the post.
+ * @param {string} mediaUrl - The current media URL of the post.
+ * @param {string} mediaAlt - The current media alt text of the post.
+ */
 function showEditForm(id, title, body, tags, mediaUrl, mediaAlt) {
     const editFormContainer = document.getElementById(`edit-form-container-${id}`);
     if (!editFormContainer) {
@@ -113,29 +140,38 @@ function showEditForm(id, title, body, tags, mediaUrl, mediaAlt) {
 
     document.getElementById(`edit-post-form-${id}`).addEventListener('submit', async (e) => {
         e.preventDefault();
-
-        const updatedPost = {
-            title: document.getElementById(`post-title-${id}`).value,
-            body: document.getElementById(`post-body-${id}`).value,
-            tags: document.getElementById(`post-tags-${id}`).value.split(',').map(tag => tag.trim()),
-            media: {
-                url: document.getElementById(`post-media-url-${id}`).value,
-                alt: document.getElementById(`post-media-alt-${id}`).value
-            }
-        };
-
+        const updatedPost = gatherUpdatedPostData(id);
         await handlePostUpdate(id, updatedPost);
     });
 }
 
-// Function to handle updating a post
+/**
+ * Gathers updated post data from the edit form.
+ * @param {string} id - The ID of the post being edited.
+ * @returns {Object} The updated post data.
+ */
+function gatherUpdatedPostData(id) {
+    return {
+        title: document.getElementById(`post-title-${id}`).value,
+        body: document.getElementById(`post-body-${id}`).value,
+        tags: document.getElementById(`post-tags-${id}`).value.split(',').map(tag => tag.trim()),
+        media: {
+            url: document.getElementById(`post-media-url-${id}`).value,
+            alt: document.getElementById(`post-media-alt-${id}`).value
+        }
+    };
+}
+
+/**
+ * Handles the post update operation.
+ * @param {string} postId - The ID of the post to update.
+ * @param {Object} updatedPost - The updated post data.
+ */
 async function handlePostUpdate(postId, updatedPost) {
     const token = localStorage.getItem('accessToken');
 
     try {
         const response = await updatePost(postId, updatedPost, token);
-
-        // Check if response has an error
         if (response.error) {
             alert(`Error updating post: ${response.error.message || 'Unknown error occurred.'}`);
             return;
@@ -149,7 +185,10 @@ async function handlePostUpdate(postId, updatedPost) {
     }
 }
 
-// Function to handle deleting a post
+/**
+ * Handles the post deletion operation.
+ * @param {string} postId - The ID of the post to delete.
+ */
 async function handlePostDelete(postId) {
     const token = localStorage.getItem('accessToken');
 
@@ -163,9 +202,11 @@ async function handlePostDelete(postId) {
     }
 }
 
-// Function to create a link to create.html
+/**
+ * Creates a link to the post creation page.
+ */
 function createPostLink() {
-    const linkContainer = document.getElementById('create'); // Get the link container
+    const linkContainer = document.getElementById('create');
     const linkHtml = `
         <a href="/templates/posts/create.html" id="create-post-link" style="display: inline-block; margin: 20px 0; padding: 10px; background-color: #4CAF50; color: white; text-align: center; text-decoration: none; border-radius: 5px;">
             Create New Post
@@ -174,11 +215,10 @@ function createPostLink() {
     linkContainer.innerHTML += linkHtml; // Add the link HTML to the container
 }
 
-// Call this function where appropriate in your profile.js file
+// Initialize post link creation and profile display on page load
 window.onload = () => {
     createPostLink(); // Create the post link when the profile page loads
-    // Other initialization code...
 };
 
-// Run the function to display the user profile on page load
+// Run the function to display the user profile when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', displayUserProfile);

@@ -1,14 +1,22 @@
-
+// Import necessary API functions and utilities
 import { fetchPostDetails, fetchAuthorProfile, addComment, deleteComment, reactToPost } from '../api/api.js';
 
-// Function to get the post ID from the URL
-function getPostIdFromUrl() {
+/**
+ * Retrieves the post ID from the URL.
+ * @returns {string|null} The post ID or null if not found.
+ */
+const getPostIdFromUrl = () => {
     const params = new URLSearchParams(window.location.search);
     return params.get('postId'); // Retrieve the postId from the URL
-}
+};
 
-// Function to display post details
-async function displayPostDetails() {
+/**
+ * Displays the details of the post, including title, body, media, tags, comments, and reactions.
+ * It fetches the post details and updates the HTML content of the page accordingly.
+ * @async
+ * @returns {Promise<void>} 
+ */
+const displayPostDetails = async () => {
     const token = localStorage.getItem('accessToken');
     const postId = getPostIdFromUrl();
 
@@ -24,39 +32,37 @@ async function displayPostDetails() {
 
     try {
         const post = await fetchPostDetails(postId, token);
-
+        
         if (!post.data) {
             document.getElementById('post-details').innerHTML = '<p>Post not found.</p>';
             return;
         }
 
+        const { title, body, media, tags, created, _count, reactions, comments = [] } = post.data;
         const author = post.data.author || {};
         const authorName = author.name || 'Unknown';
         const authorUsername = author.username || authorName;
 
         const postHtml = `
             <div class="post">
-                <h2>${post.data.title}</h2>
-                <p>${post.data.body}</p>
-                ${post.data.media ? `<img src="${post.data.media.url}" alt="${post.data.media.alt}" style="max-width:100%;">` : ''}
-                <p>Tags: ${post.data.tags.join(', ')}</p>
-                <p>Created: ${new Date(post.data.created).toLocaleString()}</p>
+                <h2>${title}</h2>
+                <p>${body}</p>
+                ${media ? `<img src="${media.url}" alt="${media.alt}" style="max-width:100%;">` : ''}
+                <p>Tags: ${tags.join(', ')}</p>
+                <p>Created: ${new Date(created).toLocaleString()}</p>
                 <p>Author: <a href="#" id="author-link">${authorName}</a></p>
                 ${author.avatar ? `<img src="${author.avatar.url}" alt="${author.avatar.alt}" style="width: 50px; height: 50px; border-radius: 50%;">` : ''}
-                <p>Comments: ${post.data._count.comments}</p>
+                <p>Comments: ${_count.comments}</p>
                 <p>Reactions:</p>
                 <ul id="reaction-list">
-                    ${post.data.reactions.map(reaction => `
+                    ${reactions.map(reaction => `
                         <li>${reaction.symbol}: ${reaction.count} (${reaction.reactors.join(', ')})</li>
                     `).join('')}
                 </ul>
                 <div id="reaction-section">
-                    <button class="reaction-btn" data-symbol="👍">👍</button>
-                    <button class="reaction-btn" data-symbol="❤️">❤️</button>
-                    <button class="reaction-btn" data-symbol="😂">😂</button>
-                    <button class="reaction-btn" data-symbol="😮">😮</button>
-                    <button class="reaction-btn" data-symbol="😢">😢</button>
-                    <button class="reaction-btn" data-symbol="😡">😡</button>
+                    ${['👍', '❤️', '😂', '😮', '😢', '😡'].map(symbol => `
+                        <button class="reaction-btn" data-symbol="${symbol}">${symbol}</button>
+                    `).join('')}
                 </div>
             </div>
             <h3>Comments</h3>
@@ -69,12 +75,12 @@ async function displayPostDetails() {
 
         document.getElementById('post-details').innerHTML = postHtml;
 
+        // Add event listeners
         document.getElementById('author-link').addEventListener('click', (e) => {
             e.preventDefault();
-            handleAuthorClick(authorName, authorUsername);
+            handleAuthorClick(authorUsername);
         });
 
-        const comments = post.data.comments || [];
         await displayComments(comments, postId, token);
 
         document.getElementById('comment-form').addEventListener('submit', async (e) => {
@@ -93,32 +99,43 @@ async function displayPostDetails() {
         console.error('Error fetching post details:', error.message);
         document.getElementById('post-details').innerHTML = '<p>Error fetching post details.</p>';
     }
-}
+};
 
-// Function to handle author click
-async function handleAuthorClick(authorName, authorUsername) {
+/**
+ * Handles the author link click event.
+ * Fetches the author's profile and redirects to the author's page.
+ * @async
+ * @param {string} authorUsername - The username of the author.
+ * @returns {Promise<void>}
+ */
+const handleAuthorClick = async (authorUsername) => {
     const token = localStorage.getItem('accessToken');
-    
+
     if (!authorUsername) {
         console.error('Username is not defined for the author');
         return;
     }
 
     try {
-        const authorProfile = await fetchAuthorProfile(authorUsername, token);
-        console.log('Author Profile:', authorProfile);
-
-        // Redirect to user profile page
+        await fetchAuthorProfile(authorUsername, token);
         window.location.href = `/templates/user/user.html?username=${encodeURIComponent(authorUsername)}`;
     } catch (error) {
         console.error('Error fetching author profile:', error.message);
     }
-}
+};
 
-// Function to display comments
-async function displayComments(comments, postId, token) {
+/**
+ * Displays the comments for the post.
+ * @async
+ * @param {Array} comments - The array of comment objects.
+ * @param {string} postId - The ID of the post.
+ * @param {string} token - The access token for authentication.
+ * @returns {Promise<void>}
+ */
+const displayComments = async (comments, postId, token) => {
+    const commentsSection = document.getElementById('comments-section');
     if (!comments.length) {
-        document.getElementById('comments-section').innerHTML = '<p>No comments available.</p>';
+        commentsSection.innerHTML = '<p>No comments available.</p>';
         return;
     }
 
@@ -131,7 +148,7 @@ async function displayComments(comments, postId, token) {
         </div>
     `).join('');
 
-    document.getElementById('comments-section').innerHTML = commentsHtml;
+    commentsSection.innerHTML = commentsHtml;
 
     document.querySelectorAll('.delete-comment-btn').forEach(button => {
         button.addEventListener('click', async (e) => {
@@ -139,10 +156,16 @@ async function displayComments(comments, postId, token) {
             await handleCommentDelete(postId, commentId, token);
         });
     });
-}
+};
 
-// Function to handle comment submission
-async function handleCommentSubmit(postId, token) {
+/**
+ * Handles the submission of a new comment.
+ * @async
+ * @param {string} postId - The ID of the post to which the comment is being added.
+ * @param {string} token - The access token for authentication.
+ * @returns {Promise<void>}
+ */
+const handleCommentSubmit = async (postId, token) => {
     const commentBody = document.getElementById('comment-body').value;
 
     if (!commentBody.trim()) {
@@ -157,29 +180,41 @@ async function handleCommentSubmit(postId, token) {
     } catch (error) {
         console.error('Error adding comment:', error.message);
     }
-}
+};
 
-// Function to handle comment deletion
-async function handleCommentDelete(postId, commentId, token) {
+/**
+ * Handles the deletion of a comment.
+ * @async
+ * @param {string} postId - The ID of the post from which the comment is being deleted.
+ * @param {string} commentId - The ID of the comment to delete.
+ * @param {string} token - The access token for authentication.
+ * @returns {Promise<void>}
+ */
+const handleCommentDelete = async (postId, commentId, token) => {
     try {
         await deleteComment(postId, commentId, token);
-        console.log(`Comment ${commentId} deleted successfully.`);
         document.getElementById(`comment-${commentId}`).remove(); // Remove the comment from the DOM
     } catch (error) {
         console.error('Error deleting comment:', error.message);
     }
-}
+};
 
-
-// Function to handle adding a reaction
-async function handleReaction(postId, symbol, token) {
+/**
+ * Handles adding a reaction to a post.
+ * @async
+ * @param {string} postId - The ID of the post to which the reaction is being added.
+ * @param {string} symbol - The reaction symbol (e.g., 👍, ❤️).
+ * @param {string} token - The access token for authentication.
+ * @returns {Promise<void>}
+ */
+const handleReaction = async (postId, symbol, token) => {
     try {
         await reactToPost(postId, symbol, token);
         await displayPostDetails();
     } catch (error) {
         console.error('Error adding reaction:', error.message);
     }
-}
+};
 
 // Call displayPostDetails on page load
 document.addEventListener('DOMContentLoaded', displayPostDetails);

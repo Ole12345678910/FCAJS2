@@ -1,10 +1,13 @@
-// post.js
+// Import necessary API functions and utilities
 import { fetchPosts, searchPosts } from '../api/api.js'; 
 import { renderPosts } from '../utils/utils.js';
 
 let allPosts = []; // Store all fetched posts for searching
 
-// Fetch all posts
+/**
+ * Fetch all posts from the API.
+ * @returns {Promise<Array>} A promise that resolves to an array of posts.
+ */
 async function fetchAllPosts() {
   const token = localStorage.getItem('accessToken');
   
@@ -23,7 +26,12 @@ async function fetchAllPosts() {
   }
 }
 
-// Display posts based on the search query
+/**
+ * Display posts based on the search query.
+ * If a search query is provided, it fetches the searched posts; otherwise, it fetches all posts.
+ * @param {string} [searchQuery=''] - The query string to search for posts.
+ * @returns {Promise<void>}
+ */
 async function displayPosts(searchQuery = '') {
   const posts = await fetchAllPosts();
 
@@ -36,7 +44,12 @@ async function displayPosts(searchQuery = '') {
   }
 }
 
-// Debounce function for optimizing search input
+/**
+ * Debounce function to optimize search input handling.
+ * @param {Function} func - The function to debounce.
+ * @param {number} delay - The debounce delay in milliseconds.
+ * @returns {Function} A debounced version of the provided function.
+ */
 function debounce(func, delay) {
   let timeout;
   return function (...args) {
@@ -45,7 +58,9 @@ function debounce(func, delay) {
   };
 }
 
-// Check authentication and redirect if necessary
+/**
+ * Check if the user is authenticated; if not, redirect to the login page.
+ */
 function checkAuthentication() {
   const token = localStorage.getItem('accessToken');
 
@@ -55,7 +70,9 @@ function checkAuthentication() {
   }
 }
 
-// Set up the search functionality
+/**
+ * Set up the search functionality for the posts.
+ */
 function setupSearch() {
   const searchInput = document.getElementById('search-query');
   
@@ -69,14 +86,17 @@ function setupSearch() {
   }, 300));
 }
 
-// Initialize application
+/**
+ * Initialize the application by checking authentication, displaying posts, and setting up search.
+ * @returns {Promise<void>}
+ */
 async function initApp() {
   checkAuthentication();
   await displayPosts();
   setupSearch();
 }
 
-// Add event listener for profile link if exists
+// Add event listener for the profile link if it exists
 document.getElementById('profile-link')?.addEventListener('click', (event) => {
   const token = localStorage.getItem('accessToken');
 

@@ -1,8 +1,9 @@
+// Import necessary API functions and utilities
 import { API_KEY, API_BASE } from "../constants/config.js";
 import { followUser, unfollowUser } from '../api/api.js';
-import { renderProfile } from "../utils/utils.js"; // Import renderProfile
+import { renderProfile } from "../utils/utils.js"; // Import renderProfile utility
 
-// Function to get the username from the URL
+// Retrieves the username from the URL query parameters
 function getUsernameFromUrl() {
     const params = new URLSearchParams(window.location.search);
     const username = params.get('username'); // Get username from URL
@@ -10,6 +11,12 @@ function getUsernameFromUrl() {
     return username; // Return the username
 }
 
+/**
+ * Fetches the user profile data from the API.
+ * @param {string} username - The username of the profile to fetch.
+ * @param {string} token - The access token for authentication.
+ * @returns {Promise<Object>} The user profile data.
+ */
 async function fetchUserProfile(username, token) {
     if (!username) {
         throw new Error('Username is undefined'); // Added error handling
@@ -30,7 +37,12 @@ async function fetchUserProfile(username, token) {
     return await response.json(); // Return the JSON response
 }
 
-// Function to fetch user posts by username
+/**
+ * Fetches the posts made by the user.
+ * @param {string} username - The username of the profile to fetch posts for.
+ * @param {string} token - The access token for authentication.
+ * @returns {Promise<Array>} The array of user posts.
+ */
 async function fetchUserPosts(username, token) {
     const response = await fetch(`${API_BASE}/social/profiles/${username}/posts`, {
         method: 'GET',
@@ -47,13 +59,17 @@ async function fetchUserPosts(username, token) {
     return await response.json(); // Return the JSON response
 }
 
-// Function to set up follow/unfollow buttons
+/**
+ * Sets up the follow and unfollow buttons with their event listeners.
+ * @param {string} token - The access token for authentication.
+ * @param {string} username - The username of the profile to follow/unfollow.
+ */
 function setupFollowUnfollowButtons(token, username) {
-    // Always show both buttons
+    // Show both buttons
     document.getElementById('follow-button').style.display = 'inline';  
     document.getElementById('unfollow-button').style.display = 'inline'; 
 
-    // Add event listeners to both buttons
+    // Add event listener for following the user
     document.getElementById('follow-button').addEventListener('click', async () => {
         const success = await followUser(username, token);
         if (success) {
@@ -64,6 +80,7 @@ function setupFollowUnfollowButtons(token, username) {
         }
     });
 
+    // Add event listener for unfollowing the user
     document.getElementById('unfollow-button').addEventListener('click', async () => {
         const success = await unfollowUser(username, token);
         if (success) {
@@ -75,18 +92,19 @@ function setupFollowUnfollowButtons(token, username) {
     });
 }
 
-// Function to display user profile details and posts
+/**
+ * Displays the user profile and their posts on the page.
+ */
 async function displayUserProfile() {
-    const token = localStorage.getItem('accessToken'); // Get token from localStorage
+    const token = localStorage.getItem('accessToken'); // Retrieve token from localStorage
     const username = getUsernameFromUrl(); // Get the username from URL
 
-    // Check for access token
+    // Validate access token and username
     if (!token) {
         displayLoginMessage();
         return;
     }
 
-    // Check for username
     if (!username) {
         displayNoUserMessage();
         return;
@@ -102,7 +120,7 @@ async function displayUserProfile() {
             return;
         }
 
-        // Display the user profile information using renderProfile
+        // Render the user profile information
         renderProfile(userProfile.data); // Use the imported renderProfile function
 
         // Display the user posts
@@ -110,33 +128,38 @@ async function displayUserProfile() {
 
         // Set up follow/unfollow buttons
         setupFollowUnfollowButtons(token, username);
-
     } catch (error) {
         console.error('Error fetching user profile:', error.message);
         displayErrorMessage();
     }
 }
 
-
-// Helper function to display user posts
+/**
+ * Displays the user posts in the UI.
+ * @param {Array} posts - The array of user posts to display.
+ */
 function displayUserPosts(posts) {
     const postsHtml = posts.length ? `
         <h2>Posts</h2>
         <div id="user-posts">
-            ${posts.map(post => createPostHtml(post)).join('')}
+            ${posts.map(createPostHtml).join('')} <!-- Create HTML for each post -->
         </div>
     ` : '<p>No posts available.</p>';
 
     document.getElementById('user-posts').innerHTML = postsHtml; // Display posts in the 'user-posts' container
 }
 
-// Helper function to create HTML for individual post
+/**
+ * Creates HTML for an individual post.
+ * @param {Object} post - The post data to create HTML for.
+ * @returns {string} The HTML representation of the post.
+ */
 function createPostHtml(post) {
     return `
         <div class="post">
             <h3><a href="/templates/posts/details.html?postId=${post.id}">${post.title}</a></h3>
             <p>${post.body}</p>
-            ${post.media ? `<img src="${post.media.url}" alt="${post.media.alt}" style="max-width:100%;">` : ''}
+            ${post.media ? `<img src="${post.media.url}" alt="${post.media.alt || 'Post Image'}" style="max-width:100%;">` : ''}
             <p>Tags: ${post.tags ? post.tags.join(', ') : 'None'}</p>
             <p>Created: ${new Date(post.created).toLocaleString()}</p>
             <p>Comments: ${post._count?.comments || 0}</p>
@@ -145,5 +168,5 @@ function createPostHtml(post) {
     `;
 }
 
+// Initialize the profile display when the script is loaded
 displayUserProfile();
-
