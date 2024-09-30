@@ -9,30 +9,30 @@ This documentation provides a brief overview of the project's structure and func
 ```
 /FCAJS2
 │
-├── api.js               # API usage for fetching and interacting with data
+├── api.js                # API usage for fetching and interacting with data
 │
 ├── /auth
-│   ├── login.js         # User login functionality
-│   ├── logout.js        # User logout functionality
-│   └── register.js      # User registration functionality
+│   ├── login.js          # User login functionality
+│   ├── logout.js         # User logout functionality
+│   └── register.js       # User registration functionality
 │
 ├── /constants
-│   └── config.js        # Exports of API keys and links
+│   └── config.js         # Exports of API keys and links
 │
 ├── /posts
-│   ├── create.js        # Creating new posts
-│   ├── delete.js        # Deleting posts
-│   ├── details.js       # Viewing post details
-│   ├── post.js          # General post functionalities
-│   └── postFollow.js    # Following/unfollowing posts
+│   ├── create.js         # Creating new posts
+│   ├── delete.js         # Deleting posts
+│   ├── details.js        # Viewing post details
+│   ├── post.js           # General post functionalities
+│   └── postFollow.js     # Following/unfollowing posts
 │
 ├── /user
-│   ├── profile.js       # User profile management
-│   └── user.js          # Managing other users' profiles
+│   ├── profile.js        # User profile management
+│   └── user.js           # Managing other users' profiles
 │
 ├── /templates            # Contains HTML templates for the application
 │   ├── /auth
-│   │   ├── login.html   # HTML for user login
+│   │   ├── login.html    # HTML for user login
 │   │   └── register.html # HTML for user registration
 │   │
 │   ├── /posts
@@ -41,10 +41,10 @@ This documentation provides a brief overview of the project's structure and func
 │   │   └── postFollow.html# HTML for following/unfollowing posts
 │   │
 │   ├── /user
-│   │   ├── profile.html  # HTML for viewing/editing user profile
-│   │   └── user.html     # HTML for viewing other users' profiles
-│   │
-│   └── index.html        # Main HTML file for the application
+│       ├── profile.html  # HTML for viewing/editing user profile
+│       └── user.html     # HTML for viewing other users' profiles
+│   
+├──────── index.html      # Main HTML file for the application
 
 ```
 

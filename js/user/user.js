@@ -7,7 +7,6 @@ import { renderProfile } from "../utils/utils.js"; // Import renderProfile utili
 function getUsernameFromUrl() {
     const params = new URLSearchParams(window.location.search);
     const username = params.get('username'); // Get username from URL
-    console.log('Username from URL:', username); // Debug log
     return username; // Return the username
 }
 

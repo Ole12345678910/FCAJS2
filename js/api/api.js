@@ -1,10 +1,9 @@
+// Import necessary config
 import {
     API_KEY,
     API_BASE,
-    API_AUTH,
     API_AUTH_LOGIN,
     API_AUTH_REGISTER,
-    API_SOCIAL,
     API_SOCIAL_POSTS,
     API_SOCIAL_PROFILES,
 } from "../constants/config.js";
@@ -17,6 +16,16 @@ const getHeaders = (token = null) => ({
 });
 
 // Helper function to perform API requests
+/**
+ * Makes an API request.
+ *
+ * @param {string} url - The endpoint URL.
+ * @param {string} method - The HTTP method (GET, POST, PUT, DELETE).
+ * @param {string|null} token - Optional access token for authorization.
+ * @param {Object|null} body - Optional request body.
+ * @returns {Promise<Object>} The response data.
+ * @throws {Error} If the request fails.
+ */
 const apiRequest = async (url, method, token = null, body = null) => {
     const response = await fetch(url, {
         method,
@@ -27,9 +36,7 @@ const apiRequest = async (url, method, token = null, body = null) => {
     if (!response.ok) {
         const errorResponse = await response.json();
         throw new Error(
-            `${method} request failed: ${response.status} ${response.statusText} - ${
-                errorResponse.message || ""
-            }`
+            `${method} request failed: ${response.status} ${response.statusText} - ${errorResponse.message || ""}`
         );
     }
 
@@ -38,9 +45,15 @@ const apiRequest = async (url, method, token = null, body = null) => {
 
 // Authentication Functions
 
-// Function to log in the user
+/**
+ * Logs in a user and stores the token in localStorage.
+ *
+ * @param {string} email - The user's email.
+ * @param {string} password - The user's password.
+ * @returns {Promise<string>} The access token.
+ */
 export const loginUser = async (email, password) => {
-    const data = await apiRequest(`${API_AUTH_LOGIN}`, "POST", null, { email, password });
+    const data = await apiRequest(API_AUTH_LOGIN, "POST", null, { email, password });
     const token = data.data.accessToken;
     const name = data.data.name;
 
@@ -49,13 +62,16 @@ export const loginUser = async (email, password) => {
     return token;
 };
 
-// Function to register a user and store the token in localStorage
+/**
+ * Registers a user and logs them in, storing the token in localStorage.
+ *
+ * @param {Object} userData - The user's registration data.
+ * @returns {Promise<Object>} The logged-in user data.
+ */
 export const registerUserApi = async (userData) => {
-    // Register the user
-    await apiRequest(`${API_AUTH_REGISTER}`, "POST", null, userData);
+    await apiRequest(API_AUTH_REGISTER, "POST", null, userData);
     
-    // Automatically log the user in after registration
-    const loginData = await apiRequest(`${API_AUTH_LOGIN}`, "POST", null, {
+    const loginData = await apiRequest(API_AUTH_LOGIN, "POST", null, {
         email: userData.email,
         password: userData.password,
     });
@@ -70,7 +86,12 @@ export const registerUserApi = async (userData) => {
 
 // Post Functions
 
-// Function to create a post
+/**
+ * Creates a new post.
+ *
+ * @param {Object} postData - The post data to be created.
+ * @returns {Promise<boolean>} True if the post was created successfully, otherwise false.
+ */
 export const createPost = async (postData) => {
     const accessToken = localStorage.getItem("accessToken");
 
@@ -85,7 +106,7 @@ export const createPost = async (postData) => {
     }
 
     try {
-        await apiRequest(`${API_SOCIAL_POSTS}`, "POST", accessToken, postData);
+        await apiRequest(API_SOCIAL_POSTS, "POST", accessToken, postData);
         return true; // Indicate success
     } catch (error) {
         console.error("Error creating post:", error);
@@ -93,12 +114,24 @@ export const createPost = async (postData) => {
     }
 };
 
-// Function to update a post
+/**
+ * Updates an existing post.
+ *
+ * @param {string} postId - The ID of the post to be updated.
+ * @param {Object} updatedPost - The updated post data.
+ * @param {string} token - The access token.
+ * @returns {Promise<Object>} The updated post data.
+ */
 export const updatePost = async (postId, updatedPost, token) => {
     return await apiRequest(`${API_SOCIAL_POSTS}/${postId}`, "PUT", token, updatedPost);
 };
 
-// Function to delete a post
+/**
+ * Deletes a post.
+ *
+ * @param {string} postId - The ID of the post to be deleted.
+ * @returns {Promise<boolean>} True if the post was deleted successfully, otherwise false.
+ */
 export const deletePost = async (postId) => {
     const token = localStorage.getItem('accessToken');
     if (!token) {
@@ -120,8 +153,6 @@ export const deletePost = async (postId) => {
             const errorDetails = await response.json();
             throw new Error(`Failed to delete post: ${response.status} - ${response.statusText}, Details: ${JSON.stringify(errorDetails)}`);
         }
-
-        console.log('Post deleted successfully'); // Success
         return true;
     } catch (error) {
         console.error('Error deleting post:', error.message);
@@ -129,12 +160,24 @@ export const deletePost = async (postId) => {
     }
 };
 
-// Function to fetch posts made by a specific user profile
+/**
+ * Fetches posts made by a specific user profile.
+ *
+ * @param {string} username - The username of the profile.
+ * @param {string} accessToken - The access token.
+ * @returns {Promise<Object[]>} The user's posts.
+ */
 export const fetchUserPostsByProfile = async (username, accessToken) => {
     return (await apiRequest(`${API_SOCIAL_PROFILES}/${username}/posts`, "GET", accessToken)).data;
 };
 
-// Function to search posts
+/**
+ * Searches for posts based on a query.
+ *
+ * @param {string} token - The access token.
+ * @param {string} query - The search query.
+ * @returns {Promise<Object[]>} The search results.
+ */
 export const searchPosts = async (token, query) => {
     return await apiRequest(
         `${API_SOCIAL_POSTS}/search?q=${encodeURIComponent(query)}&_author=true`,
@@ -145,14 +188,29 @@ export const searchPosts = async (token, query) => {
 
 // Comment Functions
 
-// Function to add a comment
+/**
+ * Adds a comment to a post.
+ *
+ * @param {string} postId - The ID of the post.
+ * @param {string} commentBody - The body of the comment.
+ * @param {string} token - The access token.
+ * @returns {Promise<Object>} The response data.
+ */
 export const addComment = async (postId, commentBody, token) => {
     return await apiRequest(`${API_SOCIAL_POSTS}/${postId}/comment`, "POST", token, {
         body: commentBody,
     });
 };
 
-// Function to delete a comment
+/**
+ * Deletes a comment from a post.
+ *
+ * @param {string} postId - The ID of the post.
+ * @param {string} commentId - The ID of the comment.
+ * @param {string} token - The access token.
+ * @returns {Promise<Object>} The response.
+ * @throws {Error} If the deletion fails.
+ */
 export const deleteComment = async (postId, commentId, token) => {
     const response = await fetch(`${API_SOCIAL_POSTS}/${postId}/comment/${commentId}`, {
         method: "DELETE",
@@ -178,19 +236,37 @@ export const deleteComment = async (postId, commentId, token) => {
 
 // Profile Functions
 
-// Function to fetch user profile by username
+/**
+ * Fetches a user profile by username.
+ *
+ * @param {string} username - The username of the profile.
+ * @param {string} accessToken - The access token.
+ * @returns {Promise<Object>} The user profile data.
+ */
 export const getUserProfile = async (username, accessToken) => {
     return (await apiRequest(`${API_SOCIAL_PROFILES}/${username}`, "GET", accessToken)).data;
 };
 
-// Function to search profiles
+/**
+ * Searches profiles based on a query.
+ *
+ * @param {string} token - The access token.
+ * @param {string} query - The search query.
+ * @returns {Promise<Object[]>} The search results.
+ */
 export const searchProfiles = async (token, query) => {
     return await apiRequest(`${API_SOCIAL_PROFILES}/search?q=${encodeURIComponent(query)}`, "GET", token);
 };
 
 // Follow/Unfollow Functions
 
-// Function to follow a user
+/**
+ * Follows a user.
+ *
+ * @param {string} username - The username of the user to follow.
+ * @param {string} token - The access token.
+ * @returns {Promise<boolean>} True if the follow was successful, otherwise false.
+ */
 export const followUser = async (username, token) => {
     try {
         await apiRequest(`${API_SOCIAL_PROFILES}/${username}/follow`, "PUT", token);
@@ -201,7 +277,13 @@ export const followUser = async (username, token) => {
     }
 };
 
-// Function to unfollow a user
+/**
+ * Unfollows a user.
+ *
+ * @param {string} username - The username of the user to unfollow.
+ * @param {string} token - The access token.
+ * @returns {Promise<boolean>} True if the unfollow was successful, otherwise false.
+ */
 export const unfollowUser = async (username, token) => {
     try {
         await apiRequest(`${API_SOCIAL_PROFILES}/${username}/unfollow`, "PUT", token);
@@ -212,17 +294,35 @@ export const unfollowUser = async (username, token) => {
     }
 };
 
-// Function to fetch posts from followers
+/**
+ * Fetches posts from followed users.
+ *
+ * @param {string} token - The access token.
+ * @returns {Promise<Object[]>} The posts from followed users.
+ */
 export const fetchPostsFromFollowers = async (token) => {
     return (await apiRequest(`${API_SOCIAL_POSTS}/following`, "GET", token)).data;
 };
 
-// Function to fetch posts with optional limit and sorting
+/**
+ * Fetches posts with optional limit and sorting.
+ *
+ * @param {string} token - The access token.
+ * @param {number} limit - The number of posts to fetch (default is 15).
+ * @param {string} sort - The sorting criteria (default is "created").
+ * @returns {Promise<Object[]>} The fetched posts.
+ */
 export const fetchPosts = async (token, limit = 15, sort = "created") => {
     return (await apiRequest(`${API_SOCIAL_POSTS}?_author=true&sort=${sort}&limit=${limit}`, "GET", token)).data;
 };
 
-// Fetch post details with comments, reactions, and author
+/**
+ * Fetches post details including comments, reactions, and author information.
+ *
+ * @param {string} postId - The ID of the post.
+ * @param {string} token - The access token.
+ * @returns {Promise<Object>} The post details.
+ */
 export const fetchPostDetails = async (postId, token) => {
     return await apiRequest(
         `${API_SOCIAL_POSTS}/${postId}?_comments=true&_reactions=true&_author=true`,
@@ -231,12 +331,26 @@ export const fetchPostDetails = async (postId, token) => {
     );
 };
 
-// Fetch author profile
+/**
+ * Fetches the profile of the post's author.
+ *
+ * @param {string} authorUsername - The username of the author.
+ * @param {string} token - The access token.
+ * @returns {Promise<Object>} The author's profile data.
+ */
 export const fetchAuthorProfile = async (authorUsername, token) => {
     return await apiRequest(`${API_SOCIAL_PROFILES}/${authorUsername}`, "GET", token);
 };
 
-// React to a post
+/**
+ * Reacts to a post with a specified symbol.
+ *
+ * @param {string} postId - The ID of the post to react to.
+ * @param {string} symbol - The reaction symbol (e.g., emoji).
+ * @param {string} token - The access token.
+ * @returns {Promise<Object>} The response data.
+ * @throws {Error} If the reaction fails.
+ */
 export const reactToPost = async (postId, symbol, token) => {
     const encodedSymbol = encodeURIComponent(symbol); // Encode the emoji
     const response = await fetch(`${API_SOCIAL_POSTS}/${postId}/react/${encodedSymbol}`, {
@@ -257,7 +371,12 @@ export const reactToPost = async (postId, symbol, token) => {
     return await response.json(); // Return the response data if needed
 };
 
-// Function to fetch posts from followed users
+/**
+ * Fetches posts from followed users with author, comments, and reactions.
+ *
+ * @param {string} token - The access token.
+ * @returns {Promise<Object[]>} The posts from followed users.
+ */
 export const fetchFollowedPostsApi = async (token) => {
     return await apiRequest(`${API_SOCIAL_POSTS}/following?_author=true&_comments=true&_reactions=true`, "GET", token);
 };
