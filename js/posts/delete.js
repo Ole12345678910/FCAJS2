@@ -8,7 +8,7 @@
  */
 export const deletePost = async (postId, token) => {
     try {
-        const response = await fetch(`https://v2.api.noroff.dev/social/posts/${postId}`, {
+        const response = await fetch(`${API_BASE}/posts/${postId}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`,

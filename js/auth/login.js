@@ -1,5 +1,5 @@
 // login.js
-import { loginUser } from './api.js';
+import { loginUser } from '../api/api.js';
 
 const handleLogin = async (event) => {
     event.preventDefault(); // Prevent the default form submission
@@ -13,7 +13,7 @@ const handleLogin = async (event) => {
         console.log('Login successful! Access Token:', token);
         
         // Redirect to the home screen (index.html)
-        window.location.href = 'index.html'; // Change this path if needed
+        window.location.href = '/templates/index.html'; // Change this path if needed
     } catch (error) {
         console.error('Login failed. Please check your credentials.'); // Log error
         alert('Login failed. Please check your credentials.'); // Notify user

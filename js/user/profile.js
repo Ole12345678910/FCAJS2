@@ -1,5 +1,6 @@
 // profile.js
-import { getUserProfile, fetchUserPostsByProfile, deletePost, updatePost, API_KEY } from './api.js';
+import { getUserProfile, fetchUserPostsByProfile, deletePost, updatePost } from '../api/api.js';
+import { renderProfile } from '../utils/utils.js';
 
 // Function to get username from localStorage
 function getUsernameFromStorage() {
@@ -12,8 +13,7 @@ async function displayUserProfile() {
     const username = getUsernameFromStorage();
 
     if (!accessToken || !username) {
-        console.error('User is not logged in or missing access token/username.');
-        window.location.href = '/login.html'; // Redirect to login page
+        window.location.href = '/templates/auth/login.html'; // Redirect to login page
         return;
     }
 
@@ -27,26 +27,6 @@ async function displayUserProfile() {
         console.error('Error loading profile data:', error.message);
         document.getElementById('profile-error').textContent = 'Error loading profile data.';
     }
-}
-
-// Function to render the profile
-function renderProfile(profile) {
-    const profileContainer = document.getElementById('profile-container');
-    profileContainer.innerHTML = `
-        <div class="profile-header">
-            <img src="${profile.banner?.url || 'default-banner.png'}" alt="${profile.banner?.alt || 'Profile Banner'}" class="profile-banner">
-            <div class="profile-info">
-                <img src="${profile.avatar?.url || 'default-avatar.png'}" alt="${profile.avatar?.alt || 'User Avatar'}" class="profile-avatar">
-                <h1 class="profile-name">${profile.name || 'No name provided'}</h1>
-                <p class="profile-bio">${profile.bio || 'No bio available'}</p>
-                <div class="profile-stats">
-                    <span><strong>${profile._count.posts || 0}</strong> Posts</span>
-                    <span><strong>${profile._count.followers || 0}</strong> Followers</span>
-                    <span><strong>${profile._count.following || 0}</strong> Following</span>
-                </div>
-            </div>
-        </div>
-    `;
 }
 
 // Function to display User Posts
@@ -80,7 +60,7 @@ function createPostElement(post) {
         <div class="post-header">
             <p><small>Posted on: ${new Date(post.created).toLocaleDateString()}</small></p>
         </div>
-        <h4><a href="details.html?postId=${post.id}" class="post-title">${post.title || 'Untitled Post'}</a></h4>
+        <h3><a href="/templates/posts/details.html?postId=${post.id}">${post.title}</a></h3>
         ${post.media ? `<img src="${post.media.url}" alt="${post.media.alt || 'Post Image'}" class="post-image">` : ''}
         <p class="post-body">${post.body || 'No content available'}</p>
         <div class="post-tags">
@@ -147,6 +127,7 @@ function showEditForm(id, title, body, tags, mediaUrl, mediaAlt) {
         await handlePostUpdate(id, updatedPost);
     });
 }
+
 // Function to handle updating a post
 async function handlePostUpdate(postId, updatedPost) {
     const token = localStorage.getItem('accessToken');
@@ -168,12 +149,10 @@ async function handlePostUpdate(postId, updatedPost) {
     }
 }
 
-
-
 // Function to handle deleting a post
 async function handlePostDelete(postId) {
     const token = localStorage.getItem('accessToken');
-    
+
     try {
         await deletePost(postId, token);
         alert('Post deleted successfully.');
@@ -184,12 +163,11 @@ async function handlePostDelete(postId) {
     }
 }
 
-
 // Function to create a link to create.html
 function createPostLink() {
     const linkContainer = document.getElementById('create'); // Get the link container
     const linkHtml = `
-        <a href="create.html" id="create-post-link" style="display: inline-block; margin: 20px 0; padding: 10px; background-color: #4CAF50; color: white; text-align: center; text-decoration: none; border-radius: 5px;">
+        <a href="/templates/posts/create.html" id="create-post-link" style="display: inline-block; margin: 20px 0; padding: 10px; background-color: #4CAF50; color: white; text-align: center; text-decoration: none; border-radius: 5px;">
             Create New Post
         </a>
     `;
@@ -203,4 +181,4 @@ window.onload = () => {
 };
 
 // Run the function to display the user profile on page load
-displayUserProfile();
+document.addEventListener('DOMContentLoaded', displayUserProfile);

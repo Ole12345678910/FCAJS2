@@ -1,4 +1,4 @@
-import { API_KEY } from './api.js'; // Assuming you have your API_KEY defined here
+import { API_KEY,API_BASE } from "../constants/config.js";
 
 // Function to handle form submission
 async function registerUser(event) {
@@ -27,7 +27,7 @@ async function registerUser(event) {
     };
 
     try {
-        const response = await fetch('https://v2.api.noroff.dev/auth/register', {
+        const response = await fetch(`${API_BASE}/auth/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json', // Set the content type to JSON

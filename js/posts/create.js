@@ -1,13 +1,10 @@
-// create.js
-const API_KEY = "a359f87a-47df-408e-ac4e-a6490a77b19c";
-
+import { API_KEY,API_BASE } from "../constants/config.js";
 
 async function createPost(postData) {
   const accessToken = localStorage.getItem('accessToken');
-  const apiKey = 'a359f87a-47df-408e-ac4e-a6490a77b19c'; // Your API key
 
   console.log('Access Token:', accessToken);
-  console.log('API Key:', apiKey);
+  console.log('API Key:', API_KEY);
 
   if (!accessToken) {
       console.error('Access token is missing. User might not be logged in.');
@@ -22,12 +19,12 @@ async function createPost(postData) {
   console.log('Preparing to send post data:', postData);
 
   try {
-      const response = await fetch('https://v2.api.noroff.dev/social/posts', {
+      const response = await fetch(`${API_BASE}/social/posts`, {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${accessToken}`,
-              'X-Noroff-API-Key': apiKey // Ensure this is correct
+              'X-Noroff-API-Key': API_KEY // Ensure this is correct
           },
           body: JSON.stringify(postData)
       });
