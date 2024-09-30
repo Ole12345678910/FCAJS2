@@ -219,18 +219,3 @@ const handleReaction = async (postId, symbol, token) => {
 // Call displayPostDetails on page load
 document.addEventListener('DOMContentLoaded', displayPostDetails);
 
-
-const getPostDetails = async (postId, token) => {
-    const response = await fetch(`${API_BASE}/posts/${postId}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'x-api-key': API_KEY // If needed
-        },
-    });
-    return response.json();
-};
-
-const postDetails = await getPostDetails(2673, token);
-console.log(postDetails);
