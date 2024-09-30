@@ -1,6 +1,6 @@
-import { API_KEY,API_BASE } from "../constants/config.js";
+import { registerUserApi } from '../api/api.js'; // Import the new API function
 
-// Function to handle form submission
+// Function to handle user registration form submission
 async function registerUser(event) {
     event.preventDefault(); // Prevent the default form submission
 
@@ -15,7 +15,7 @@ async function registerUser(event) {
     const bannerAlt = document.getElementById('bannerAlt').value || ''; // Optional
     const venueManager = document.getElementById('venueManager').checked; // Optional
 
-    // Create user object
+    // Create user data object
     const userData = {
         name,
         email,
@@ -27,33 +27,18 @@ async function registerUser(event) {
     };
 
     try {
-        const response = await fetch(`${API_BASE}/auth/register`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json', // Set the content type to JSON
-                'X-Noroff-API-Key': API_KEY, // Include your API key
-            },
-            body: JSON.stringify(userData), // Convert user data to JSON
-        });
+        // Call the API function to register the user
+        await registerUserApi(userData);
+        
+        // Redirect to the main page upon successful registration
+        window.location.href = '/templates/index.html'; // Change the path as necessary
 
-        // Check if the registration was successful
-        if (response.ok) {
-            const responseData = await response.json();
-            document.getElementById('response-message').innerHTML = `
-                <p>User registered successfully!</p>
-                <pre>${JSON.stringify(responseData.data, null, 2)}</pre>
-            `;
-        } else {
-            const errorData = await response.json();
-            document.getElementById('response-message').innerHTML = `
-                <p>Error: ${errorData.message}</p>
-            `;
-        }
     } catch (error) {
         console.error('Error during registration:', error);
-        document.getElementById('response-message').innerHTML = `<p>Error during registration. Please try again later.</p>`;
+        document.getElementById('response-message').innerHTML = `
+            <p>Error during registration: ${error.message}</p>`;
     }
 }
 
-// Add event listener to the form
+// Add event listener to the registration form
 document.getElementById('registration-form').addEventListener('submit', registerUser);

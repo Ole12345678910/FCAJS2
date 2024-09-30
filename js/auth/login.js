@@ -1,24 +1,29 @@
-// login.js
 import { loginUser } from '../api/api.js';
 
+// Handle user login
 const handleLogin = async (event) => {
-    event.preventDefault(); // Prevent the default form submission
+    event.preventDefault(); // Prevent default form submission
 
-    const email = document.getElementById('email').value; // Get the email input value
-    const password = document.getElementById('password').value; // Get the password input value
+    // Get user credentials from the form
+    const email = document.getElementById('email').value; 
+    const password = document.getElementById('password').value; 
 
     try {
-        const token = await loginUser(email, password); // Call the login function
-
+        // Attempt to log in the user
+        const token = await loginUser(email, password); 
+        
         console.log('Login successful! Access Token:', token);
         
-        // Redirect to the home screen (index.html)
-        window.location.href = '/templates/index.html'; // Change this path if needed
+        // Redirect to the home screen
+        window.location.href = '/templates/index.html'; // Adjust the path if necessary
     } catch (error) {
-        console.error('Login failed. Please check your credentials.'); // Log error
+        console.error('Login failed:', error.message); // Log error details
         alert('Login failed. Please check your credentials.'); // Notify user
     }
 };
 
 // Attach event listener to the login form
-document.getElementById('loginForm').addEventListener('submit', handleLogin);
+const loginForm = document.getElementById('loginForm');
+if (loginForm) {
+    loginForm.addEventListener('submit', handleLogin);
+}

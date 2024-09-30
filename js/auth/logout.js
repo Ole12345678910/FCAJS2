@@ -1,3 +1,4 @@
+// Handle user logout
 const handleLogout = () => {
     // Remove the access token from local storage
     localStorage.removeItem('accessToken');
@@ -7,4 +8,7 @@ const handleLogout = () => {
 };
 
 // Attach event listener to the logout button
-document.getElementById('logoutButton').addEventListener('click', handleLogout);
+const logoutButton = document.getElementById('logoutButton');
+if (logoutButton) {
+    logoutButton.addEventListener('click', handleLogout);
+}

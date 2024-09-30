@@ -4,17 +4,14 @@ import { getUserProfile } from '../api/api.js'; // Import API functions
 export function renderPosts(posts) {
   const postsContainer = document.getElementById("posts-container");
   
-  // Check if posts is an array and has elements
-  if (Array.isArray(posts) && posts.length > 0) {
-    postsContainer.innerHTML = posts.map(createPostHtml).join("");
-  } else {
-    postsContainer.innerHTML = "<p>No posts found.</p>";
-  }
+  // Render posts or show a message if none exist
+  postsContainer.innerHTML = Array.isArray(posts) && posts.length > 0 
+    ? posts.map(createPostHtml).join("") 
+    : "<p>No posts found.</p>";
 }
 
 // Create HTML for a single post
 export function createPostHtml(post) {
-  // Ensure post is defined before proceeding
   if (!post) {
     console.error("Post is undefined.");
     return "<p>Invalid post data.</p>";
@@ -22,14 +19,14 @@ export function createPostHtml(post) {
 
   return `
     <div class="post">
-      <h3><a href="./posts/details.html?postId=${post.id}">${post.title}</a></h3>
+      <h3><a href="/templates/posts/details.html?postId=${post.id}">${post.title}</a></h3>
       <p>${post.body || 'No content available'}</p>
       ${post.media ? `<img src="${post.media.url}" alt="${post.media.alt || 'Post Image'}" style="max-width:100%;">` : ""}
-      <p>Tags: ${post.tags && post.tags.length > 0 ? post.tags.join(", ") : "None"}</p>
+      <p>Tags: ${post.tags?.length ? post.tags.join(", ") : "None"}</p>
       <p>Created: ${new Date(post.created).toLocaleString()}</p>
-      <p>Comments: ${post._count?.comments ?? 0}</p>
-      <p>Reactions: ${post._count?.reactions ?? 0}</p>
-      <p>Author: ${post.author?.name ?? "Unknown"}</p>
+      <p>Comments: ${post._count?.comments || 0}</p>
+      <p>Reactions: ${post._count?.reactions || 0}</p>
+      <p>Author: ${post.author?.name || "Unknown"}</p>
       ${post.author?.avatar ? `<img src="${post.author.avatar.url}" alt="${post.author.avatar.alt || 'User Avatar'}" style="width: 50px; height: 50px; border-radius: 50%;">` : ""}
     </div>
   `;
