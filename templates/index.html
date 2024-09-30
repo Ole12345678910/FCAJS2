@@ -1,32 +1,25 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Noroff FED2 JS2 CA</title>
-  <link rel="stylesheet" href="/css/style.css">
-</head>
-
-<body>
-  <h1>Home</h1>
-  <a href="/templates/posts/postFollow.html">Followers Post</a>
-  <a href="/templates/user/profile.html">My Profile</a>
-  <a href="/templates/auth/login.html">Login</a>
-  <a href="/templates/auth/register.html">Register</a>
-  <button id="logoutButton">Logout</button>
-
-
-  <div id="search-container">
-    <input type="text" id="search-query" placeholder="Search posts">
-    <button id="search-btn">Search</button>
-  </div>
-  
-  <div id="button-container"></div> <!-- Container for the create and filter buttons -->
-  <div id="author-link"></div>
-  <div id="posts-container"></div> <!-- Container for posts -->
-  
-  <script defer type="module" src="/js/posts/post.js"></script>
-  <script defer type="module" src="/js/auth/logout.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Noroff FED2 JS2 CA</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <h1>Home</h1>
+    <a href="/templates/posts/postFollow.html">Followers Post</a>
+    <a href="/templates/user/profile.html">My Profile</a>
+    <a href="/templates/auth/login.html">Login</a>
+    <a href="/templates/auth/register.html">Register</a>
+    <button id="logoutButton">Logout</button>
+    <div id="search-container">
+      <input type="text" id="search-query" placeholder="Search posts" />
+      <button id="search-btn">Search</button>
+    </div>
+    <div id="button-container"></div>
+    <div id="posts-container"></div>
+    <script defer type="module" src="/js/posts/post.js"></script>
+    <script defer type="module" src="/js/auth/logout.js"></script>
+  </body>
 </html>
