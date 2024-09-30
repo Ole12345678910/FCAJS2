@@ -189,18 +189,20 @@ async function handlePostUpdate(postId, updatedPost) {
  * Handles the post deletion operation.
  * @param {string} postId - The ID of the post to delete.
  */
-async function handlePostDelete(postId) {
-    const token = localStorage.getItem('accessToken');
-
-    try {
-        await deletePost(postId, token);
-        alert('Post deleted successfully.');
-        displayUserProfile(); // Refresh the profile display
-    } catch (error) {
-        console.error('Error deleting post:', error.message);
-        alert('Error deleting post. Please try again later.');
+// Function to handle deleting a post
+const handlePostDelete = async (postId, token) => {
+    const confirmDelete = confirm("Are you sure you want to delete this post?");
+    if (confirmDelete) {
+        const deletionSuccessful = await deletePost(postId, token);
+        if (deletionSuccessful) {
+            alert('Post deleted successfully.');
+            window.location.reload();  // Refresh the page after deletion
+        } else {
+            // Handle specific error like 401 Unauthorized
+            alert('Your session has expired. Please log in again.');
+        }
     }
-}
+};
 
 /**
  * Creates a link to the post creation page.
