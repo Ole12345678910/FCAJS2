@@ -66,7 +66,7 @@ function checkAuthentication() {
 
   if (!token) {
     console.error('No access token found. Redirecting to login.');
-    window.location.href = '/templates/auth/login.html'; 
+    window.location.href = '/templates/auth/register.html'; 
   }
 }
 
