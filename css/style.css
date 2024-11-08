@@ -1,56 +1,11 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
 *{
     padding: 0;
     margin: 0;
 }
-
-.post img, .conatiner-details img
-,.banner-container{
-    width: 300px;
-}
-
-.postcontainer,.conatiner-details,.comment-text,.reactions-text,.profile-conatiner,.no-comment-text,.post{
-    margin: 3rem;
-    border: 1px solid;
-    padding: 1rem;
-}
-
-.comment{
-    margin: 0 3rem;
-    padding: 1rem;
-}
-
-/* styles.css */
-
-body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-    margin: 20px;
-    background-color: gray;
-}
-
-/* Ensure the profile picture is a circle */
-.profile-avatar {
-    width: 100px; /* Set desired width */
-    height: 100px; /* Set desired height */
-    border-radius: 50%; /* This makes the image round */
-    object-fit: cover; /* Ensures the image covers the area without distortion */
-    border: 2px solid #ccc; /* Optional: add a border around the avatar */
-}
-
-/* Optional: Style for the profile banner */
-.profile-banner {
-    width: 100%; /* Full width */
-    height: 200px; /* Set height for banner */
-    object-fit: cover; /* Ensure the banner image covers the area */
-}
-
-/* Optional: Additional styling */
-.profile-header {
-    display: flex;
-    align-items: center; /* Align items vertically */
-    gap: 20px; /* Space between avatar and profile info */
-}
-
-.profile-info {
-    flex-grow: 1; /* Allow info to take available space */
-}
+*/

@@ -1,0 +1,20 @@
+{
+  "name": "fcajs2",
+  "version": "1.0.0",
+  "description": "This documentation provides a brief overview of the project's structure and functionality. The application is designed for managing user posts, authentication, and profiles.",
+  "main": "index.js",
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "postcss-cli": "^11.0.0",
+    "tailwindcss": "^3.4.14"
+  },
+"scripts": {
+  "build": "npx postcss css/style.css -o dist/style.css",
+  "watch": "npx tailwindcss build css/style.css -o dist/style.css --watch"
+},
+
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
