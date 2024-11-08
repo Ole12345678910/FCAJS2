@@ -7,19 +7,25 @@
     <!-- Link to the generated Tailwind CSS file -->
     <link rel="stylesheet" href="dist/style.css" />
   </head>
-  <body class="bg-soft-cream">
-    <h1 class="text-white p-4">Home</h1>  <!-- Test Tailwind styles -->
-    <a href="/templates/posts/postFollow.html">Followers Post</a>
-    <a href="/templates/user/profile.html">My Profile</a>
-    <a href="/templates/auth/login.html">Login</a>
-    <a href="/templates/auth/register.html">Register</a>
-    <button id="logoutButton">Logout</button>
-    <div id="search-container">
-      <input type="text" id="search-query" placeholder="Search posts" />
-      <button id="search-btn">Search</button>
+  <body class="bg-grey-blue">
+    <header class="header">
+      <h1>Home</h1>
+      <div>
+        <a href="/templates/posts/postFollow.html">Followers Post</a>
+        <a href="/templates/user/profile.html">My Profile</a>
+        <a href="/templates/auth/login.html">Login</a>
+        <a href="/templates/auth/register.html">Register</a>
+        <button id="logoutButton">Logout</button>
+      </div>
+    </header>
+    <div class="search-bar" id="search-container">
+      <input class="p-1" type="text" id="search-query" placeholder="Search posts" />
+      <button class="bg-blue-100 px-1" id="search-btn">Search</button>
     </div>
     <div id="button-container"></div>
-    <div id="posts-container"></div>
+    <div class="center">
+      <div id="posts-container"></div>
+    </div>
     <script defer type="module" src="/js/posts/post.js"></script>
     <script defer type="module" src="/js/auth/logout.js"></script>
   </body>

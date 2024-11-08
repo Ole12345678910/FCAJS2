@@ -1,22 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>User Profile</title>
-    <link rel="stylesheet" href="/css/style.css"> <!-- Ensure this points to your CSS -->
-</head>
-<body>
-    <div class="container">
-        <div id="post-details"></div> <!-- Make sure this element exists -->
-        <a href="/index.html">Home</a>
+    <link rel="stylesheet" href="/dist/style.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body class="bg-grey-blue">
+    <header class="bg-light-green">
+      <a href="/index.html">Home</a>
+    </header>
+    <div id="profile-container"></div>
+    <div class="center">        
+        <div id="post-details"></div>
         <div class="edit-form-container"></div>
-        
-        <div id="profile-container"></div> <!-- This is the profile container -->
-        <div id="create"></div>
-        <div id="posts-container"></div> <!-- This will hold user posts -->
-        <div id="profile-error" style="color: red;"></div> <!-- For error messages -->
+        <div id="profile-error" style="color: red"></div>
+        <div id="posts-container"></div>
     </div>
-    <script type="module" src="/js/user/profile.js"></script> <!-- Ensure this points to your JS file -->
-</body>
+    <a class="mb-4 flex justify-center"
+      href="/templates/posts/create.html"
+      id="create-post-link"
+      >Create New Post</a>
+    <script type="module" src="/js/user/profile.js"></script>
+  </body>
 </html>

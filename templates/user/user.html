@@ -4,14 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Details</title>
+    <link rel="stylesheet" href="/dist/style.css">
     <link rel="stylesheet" href="/css/style.css"> <!-- Link to your CSS file -->
 </head>
-<body>
-    <a href="/index.html">Home</a>
+<body class="bg-grey-blue">
+    <header class="bg-light-green">
+        <a href="/index.html">Home</a>
+    </header>
     <div id="profile-container"></div>
-    <div id="profile">
-        <button id="follow-button">Follow</button>
-        <button id="unfollow-button" style="display:none;">Unfollow</button>
+    <div class="bg-light-green flex justify-center" id="profile">
+        <button class="p-1" id="follow-button">Follow</button>
+        <button class="p-1" id="unfollow-button" style="display:none;">Unfollow</button>
     </div>
     <div id="user-posts"></div>
     <script defer type="module" src="/js/user/user.js"></script> <!-- Link to your JavaScript file -->

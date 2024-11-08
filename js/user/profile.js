@@ -204,18 +204,6 @@ const handlePostDelete = async (postId, token) => {
     }
 };
 
-/**
- * Creates a link to the post creation page.
- */
-function createPostLink() {
-    const linkContainer = document.getElementById('create');
-    const linkHtml = `
-        <a href="/templates/posts/create.html" id="create-post-link" style="display: inline-block; margin: 20px 0; padding: 10px; background-color: #4CAF50; color: white; text-align: center; text-decoration: none; border-radius: 5px;">
-            Create New Post
-        </a>
-    `;
-    linkContainer.innerHTML += linkHtml; // Add the link HTML to the container
-}
 
 // Initialize post link creation and profile display on page load
 window.onload = () => {
