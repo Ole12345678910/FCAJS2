@@ -61,13 +61,13 @@ const displayPostDetails = async () => {
     const authorUsername = author.username || authorName;
 
     const postHtml = `
-<div class=" post">
+<div class="card post">
     <h2 class="text-3xl font-semibold text-gray-900 mb-4">${title}</h2>
     
     <p class="text-lg text-gray-700 mb-4">${body}</p>
     ${
       media
-        ? `<img src="${media.url}" alt="${media.alt}" class="post-card-media" />`
+        ? `<img src="${media.url}" alt="${media.alt}"/>`
         : ""
     }
     <p class="text-sm text-gray-600 mb-2"><strong>Tags:</strong> ${tags.join(
@@ -117,8 +117,8 @@ const displayPostDetails = async () => {
     </div>
 </div>
 
-<h3 class="text-2xl font-semibold text-gray-900 mb-4">Comments</h3>
-<div id="comments-section" class="space-y-4 mb-6">
+<h3 class="card text-2xl font-semibold text-gray-900 mb-4">Comments</h3>
+<div id="comments-section" class="card space-y-4 mb-6">
     <!-- Example of a comment -->
     <div class="comment p-4 bg-gray-50 rounded-lg shadow-sm">
         <p class="font-semibold text-gray-800">Jane Doe</p>
@@ -128,7 +128,7 @@ const displayPostDetails = async () => {
     <!-- More comments will be dynamically added here -->
 </div>
 
-<form id="comment-form" class="bg-card-color p-4 rounded-lg shadow-md">
+<form id="comment-form" class="card bg-card-color p-4 rounded-lg shadow-md">
     <textarea id="comment-body" placeholder="Add a comment..." class="bg-light-card-color w-full p-4 border border-gray-300 rounded-lg mb-4 resize-none" rows="4"></textarea>
     <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">Submit Comment</button>
 </form>

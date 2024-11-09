@@ -154,7 +154,7 @@ function displayUserPosts(posts) {
  */
 function createPostHtml(post) {
     return `
-        <div class="post bg-grey rounded-lg shadow-lg p-6 mb-6 max-w-4xl mx-auto">
+        <div class="card">
             <!-- Post Title -->
             <h3 class="text-2xl font-semibold text-gray-800 mb-4">
                 <a href="/templates/posts/details.html?postId=${post.id}" class="hover:text-blue-500">

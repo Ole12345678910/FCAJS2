@@ -29,20 +29,6 @@ module.exports = {
             color: "#2D3748",
           },
           // Post card styles
-          ".post-card": {
-            backgroundColor: "#C5D3E8", // Apply custom background color
-            borderRadius: "0.5rem", // rounded-lg
-            boxShadow: theme("boxShadow.md"),
-            padding: "1.5rem", // p-6
-            marginBottom: "1.5rem", // mb-6
-            overflow: "hidden",
-            transition: "box-shadow 0.3s ease",
-            width: "600px", // Corrected property
-          },
-
-          ".post-card:hover": {
-            boxShadow: theme("boxShadow.lg"),
-          },
           ".post-card-title": {
             fontSize: "1.5rem", // text-2xl
             fontWeight: "600", // font-semibold
@@ -61,12 +47,9 @@ module.exports = {
             color: theme("colors.gray.600"),
             fontSize: "0.875rem", // text-sm
             marginBottom: "1rem", // mb-4
-          },
-          ".post-card-media": {
-            maxWidth: "800px",
-            height: "auto",
-            borderRadius: "0.5rem", // rounded-lg
-            marginBottom: "1rem", // mb-4
+            wordWrap: "break-word", // Break long words to prevent overflow
+            overflow: "hidden", // Hide any overflow (text that exceeds container)
+            whiteSpace: "normal", // Ensure text wraps
           },
           ".post-card-meta": {
             fontSize: "0.75rem", // text-xs
@@ -115,9 +98,6 @@ module.exports = {
             cursor: 'pointer', // Pointer cursor on hover
             transition: 'background-color 0.3s', // Smooth transition on hover
           },
-          '.header button:hover': {
-            backgroundColor: '#0056b3', // Darker blue on hover
-          },
           '.search-bar':{
             padding: '0.5rem 1rem',
             backgroundColor: '#FFF8DE',
@@ -127,10 +107,6 @@ module.exports = {
             display: 'block',
             padding: '2rem',
 
-          },
-          '.image-comment':{
-            display: 'block',
-            padding: '2rem',
           },
           '.profile-header': {
             backgroundColor: "#FFF8DE",
@@ -164,10 +140,6 @@ module.exports = {
             fontSize: theme('fontSize.3xl'), // text-3xl
             fontWeight: theme('fontWeight.semibold'), // font-semibold
 
-          },
-          '.profile-bio': {
-
-            fontSize: theme('fontSize.base'), // text-base
           },
           '.profile-stats': {
             display: 'flex',
@@ -232,6 +204,17 @@ module.exports = {
           },
           ".edit-submit-btn:hover": {
             backgroundColor: theme("colors.blue.600"),
+          },
+          '.card': {
+            backgroundColor: '#C5D3E8', // Grey background (adjust if necessary)
+            borderRadius: '0.5rem', // Tailwind's rounded-lg
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', // Tailwind's shadow-lg
+            padding: '1.5rem', // Tailwind's p-6
+            marginBottom: '1.5rem', // Tailwind's mb-6
+            maxWidth: '48rem', // Tailwind's max-w-4xl
+            marginLeft: '2rem', // Set left margin
+            marginRight: '2rem', // Set right margin if needed, for consistency
+            marginTop: '1rem', // Optional: You can adjust this as needed
           },
         },
         ["responsive", "hover"]

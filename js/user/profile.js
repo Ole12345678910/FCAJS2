@@ -93,7 +93,7 @@ function createPostElement(post) {
           post.media
             ? `<img src="${post.media.url}" alt="${
                 post.media.alt || "Post Image"
-              }" class="post-card-media post-image">`
+              }" class="post-image">`
             : ""
         }
         <p class="post-body">${post.body || "No content available"}</p>
