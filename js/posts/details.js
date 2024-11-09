@@ -67,7 +67,7 @@ const displayPostDetails = async () => {
     <p class="text-lg text-gray-700 mb-4">${body}</p>
     ${
       media
-        ? `<img src="${media.url}" alt="${media.alt}" class="w-full rounded-lg mb-4" />`
+        ? `<img src="${media.url}" alt="${media.alt}" class="post-card-media" />`
         : ""
     }
     <p class="text-sm text-gray-600 mb-2"><strong>Tags:</strong> ${tags.join(
@@ -128,8 +128,8 @@ const displayPostDetails = async () => {
     <!-- More comments will be dynamically added here -->
 </div>
 
-<form id="comment-form" class="bg-white p-4 rounded-lg shadow-md">
-    <textarea id="comment-body" placeholder="Add a comment..." class="w-full p-4 border border-gray-300 rounded-lg mb-4 resize-none" rows="4"></textarea>
+<form id="comment-form" class="bg-card-color p-4 rounded-lg shadow-md">
+    <textarea id="comment-body" placeholder="Add a comment..." class="bg-light-card-color w-full p-4 border border-gray-300 rounded-lg mb-4 resize-none" rows="4"></textarea>
     <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">Submit Comment</button>
 </form>
 

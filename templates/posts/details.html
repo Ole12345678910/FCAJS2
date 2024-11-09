@@ -4,14 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Post Details</title>
-    <link rel="stylesheet" href="/css/style.css"> <!-- Your stylesheet -->
+    <link rel="stylesheet" href="/css/style.css">
     <script defer type="module" src="/js/posts/details.js" defer></script> <!-- Importing details.js -->
     <link rel="stylesheet" href="/dist/style.css">
 </head>
 <body class="bg-grey-blue">
-    <header class="bg-light-green">
+    <header class="header">
         <a href="/index.html">Home</a>
-    </header>
+        <div>
+          <a href="/templates/posts/postFollow.html">Followers Post</a>
+          <a href="/templates/user/profile.html">My Profile</a>
+          <a href="/templates/auth/login.html">Login</a>
+          <a href="/templates/auth/register.html">Register</a>
+          <button id="logoutButton">Logout</button>
+        </div>
+      </header>
     <div class="center">
         <div id="post-details"></div>
     </div>

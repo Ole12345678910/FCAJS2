@@ -6,6 +6,7 @@ module.exports = {
         "grey-blue": "#A6AEBF",
         "light-green": "#D0E8C5",
         "card-color": '#C5D3E8',
+        "light-card-color": '#E3EBF4',
       },
     },
   },
@@ -62,7 +63,7 @@ module.exports = {
             marginBottom: "1rem", // mb-4
           },
           ".post-card-media": {
-            width: "100%",
+            maxWidth: "800px",
             height: "auto",
             borderRadius: "0.5rem", // rounded-lg
             marginBottom: "1rem", // mb-4
@@ -179,6 +180,58 @@ module.exports = {
             marginLeft: theme('spacing.6'), // space-x-6
 
             fontWeight: theme('fontWeight.semibold'), // font-semibold
+          },
+          ".edit-post-form": {
+            backgroundColor: '#C5D3E8',
+            padding: "1.5rem",
+            borderRadius: theme("borderRadius.lg"),
+            boxShadow: theme("boxShadow.md"),
+            display: "flex",
+            flexDirection: "column",
+            gap: "1rem",
+          },
+          ".edit-input": {
+            width: "100%",
+            padding: "0.5rem",
+            border: `1px solid ${theme("colors.gray.300")}`,
+            borderRadius: theme("borderRadius.md"),
+            fontSize: theme("fontSize.sm"),
+            outline: "none",
+            transition: "border-color 0.2s",
+            backgroundColor: '#E1E8F0',
+          },
+          ".edit-input:focus": {
+            borderColor: theme("colors.blue.500"),
+            backgroundColor: '#E1E8F0',
+          },
+          ".edit-textarea": {
+            width: "100%",
+            padding: "0.5rem",
+            border: `1px solid ${theme("colors.gray.300")}`,
+            borderRadius: theme("borderRadius.md"),
+            fontSize: theme("fontSize.sm"),
+            outline: "none",
+            transition: "border-color 0.2s",
+            minHeight: "100px",
+            backgroundColor: '#E1E8F0',
+          },
+          ".edit-textarea:focus": {
+            borderColor: theme("colors.blue.500"),
+            backgroundColor: '#E1E8F0',
+          },
+          ".edit-submit-btn": {
+            backgroundColor: theme("colors.blue.500"),
+            color: theme("colors.white"),
+            padding: "0.5rem 1rem",
+            borderRadius: theme("borderRadius.md"),
+            fontSize: theme("fontSize.sm"),
+            fontWeight: "bold",
+            textTransform: "uppercase",
+            cursor: "pointer",
+            transition: "background-color 0.3s",
+          },
+          ".edit-submit-btn:hover": {
+            backgroundColor: theme("colors.blue.600"),
           },
         },
         ["responsive", "hover"]

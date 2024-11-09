@@ -8,9 +8,16 @@
     <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body class="bg-grey-blue">
-    <header class="bg-light-green">
-      <a href="/index.html">Home</a>
-    </header>
+    <header class="header">
+        <a href="/index.html">Home</a>
+        <div>
+          <a href="/templates/posts/postFollow.html">Followers Post</a>
+          <a href="/templates/user/profile.html">My Profile</a>
+          <a href="/templates/auth/login.html">Login</a>
+          <a href="/templates/auth/register.html">Register</a>
+          <button id="logoutButton">Logout</button>
+        </div>
+      </header>
     <div id="profile-container"></div>
     <div class="center">        
         <div id="post-details"></div>
@@ -18,10 +25,13 @@
         <div id="profile-error" style="color: red"></div>
         <div id="posts-container"></div>
     </div>
-    <a class="mb-4 flex justify-center"
-      href="/templates/posts/create.html"
-      id="create-post-link"
-      >Create New Post</a>
+    <div class="flex justify-center">
+        <a class="mb-4 bg-green-500 text-white font-semibold px-4 py-2 rounded hover:bg-green-600 transition duration-200 shadow-md"
+           href="/templates/posts/create.html"
+           id="create-post-link">
+           Create New Post
+        </a>
+    </div>
     <script type="module" src="/js/user/profile.js"></script>
   </body>
 </html>
