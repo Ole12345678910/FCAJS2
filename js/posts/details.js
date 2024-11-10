@@ -106,12 +106,14 @@ const displayPostDetails = async () => {
     </ul>
 
 
-    <div id="reaction-section" class="flex space-x-4 mb-6">
+    <div id="reaction-section" class="flex justify-center flex-wrap md:flex-nowrap space-x-2 md:space-x-4 mb-6">
         ${["👍", "❤️", "😂", "😮", "😢", "😡"]
           .map(
             (symbol) => `
-            <button class="reaction-btn text-2xl hover:bg-gray-200 p-2 rounded-lg" data-symbol="${symbol}">${symbol}</button>
-        `
+            <button class="reaction-btn text-xl md:text-2xl hover:bg-gray-200 p-1 md:p-2 rounded-lg" data-symbol="${symbol}">
+                ${symbol}
+            </button>
+          `
           )
           .join("")}
     </div>

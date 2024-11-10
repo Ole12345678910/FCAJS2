@@ -150,7 +150,6 @@ module.exports = {
           },
           '.profile-stats span': {
             marginLeft: theme('spacing.6'), // space-x-6
-
             fontWeight: theme('fontWeight.semibold'), // font-semibold
           },
           ".edit-post-form": {

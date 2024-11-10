@@ -25,30 +25,32 @@ export function createPostHtml(post) {
     console.error("Post is undefined.");
     return "<p>Invalid post data.</p>";
   }
-/*her */
-  return `
+
+return `
 <div class="card">
     <!-- Title -->
     <h3 class="post-card-title text-xl font-semibold mb-4 overflow-hidden text-ellipsis">
-    <a href="/templates/posts/details.html?postId=${post.id}" class="text-blue-600 hover:underline break-words">
-        ${post.title}
-    </a>
+        <a href="/templates/posts/details.html?postId=${post.id}" class="text-blue-600 hover:underline break-words">
+            ${post.title}
+        </a>
     </h3>
-
 
     <!-- Post Body -->
     <p class="post-card-body">${post.body || "No content available"}</p>
 
-    <!-- Post Media (Image) -->
+    <div class="flex justify-center">
     ${
-      post.media
-        ? `
-        <img src="${post.media.url}" alt="${
-            post.media.alt || "Post Image"
-          }class="flex justify-center w-auto h-auto mb-4 rounded-lg">`
-        : ""
-    }
+        post.media
+            ? `
+<img 
+    src="${post.media.url}" 
+    alt="${post.media.alt || "Post Image"}" 
+    class="w-full h-[400px] object-cover mb-4 rounded-lg">
 
+            `
+            : ""
+    }
+    </div>
     <!-- Tags -->
     <p class="post-card-meta">
         Tags: ${post.tags?.length ? post.tags.join(", ") : "None"}
@@ -64,19 +66,18 @@ export function createPostHtml(post) {
 
     <!-- Author Avatar -->
     ${
-      post.author?.avatar
-        ? `
-        <div>
-            <img src="${post.author.avatar.url}" alt="${
-            post.author.avatar.alt || "User Avatar"
-          }" class="post-card-avatar">
-            <span class="font-medium">${post.author?.name || "Unknown"}</span>
-        </div>
-    `
-        : ""
+        post.author?.avatar
+            ? `
+            <div>
+                <img src="${post.author.avatar.url}" alt="${post.author.avatar.alt || "User Avatar"}" class="post-card-avatar">
+                <span class="font-medium">${post.author?.name || "Unknown"}</span>
+            </div>
+            `
+            : ""
     }
 </div>
-    `;
+`;
+
 }
 
 /**

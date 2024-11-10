@@ -169,7 +169,7 @@ function createPostHtml(post) {
 
             <!-- Post Media (Image) -->
             ${post.media ? `
-                <img src="${post.media.url}" alt="${post.media.alt || 'Post Image'}" class="w-full h-auto rounded-lg mb-4">
+                <img src="${post.media.url}" alt="${post.media.alt || 'Post Image'}" class="w-full h-[400px] object-cover mb-4 rounded-lg">
             ` : ''}
 
             <!-- Tags -->
