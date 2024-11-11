@@ -66,6 +66,22 @@ This documentation provides a brief overview of the project's structure and func
 
 ## API Documentation
 
-The application uses a RESTful API for managing user accounts and posts, including endpoints for registration, authentication, and post management.
+
+## Installation
+
+To set up the project on your local machine, follow these steps:
+
+1. **Install all required packages**:
+   Run the following command to install all dependencies defined in `package.json`:
+   ```bash
+   npm install
+   ```
+   > **Note**: You can also use `npm i` as a shortcut for `npm install`.
+
+2. **Run CSS Watch**:
+   To automatically compile your CSS changes, run the following command:
+   ```bash
+   npm run watch
+   ```
 
 ---
