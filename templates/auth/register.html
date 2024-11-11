@@ -11,7 +11,6 @@
   <body class="bg-grey-blue text-white">
     <header class="header bg-light-green text-white p-4">
       <a href="/index.html" class="text-2xl font-bold">Home</a>
-
       <!-- Hamburger Icon (Hidden on larger screens) -->
       <div class="lg:hidden flex items-center">
         <button id="hamburger-icon" class="text-white p-2">
@@ -31,7 +30,6 @@
           </svg>
         </button>
       </div>
-
       <!-- Navbar Links (Visible on larger screens) -->
       <div class="hidden lg:flex space-x-6">
         <a
@@ -58,7 +56,6 @@
           Logout
         </button>
       </div>
-
       <!-- Mobile Menu (Hidden by default) -->
       <div
         id="mobile-menu"
@@ -84,7 +81,6 @@
       </div>
     </header>
     <!-- Registration Form Container -->
-
     <div class="flex justify-center p-8">
       <div class="bg-light-green p-8 rounded-lg shadow-lg w-full max-w-md">
         <h1 class="text-3xl font-bold text-center mb-6">Register</h1>
@@ -95,15 +91,13 @@
             <label for="name" class="block text-lg font-medium"
               >Username:</label
             >
-            <input type="text" id="name" required class="my-custom-class" />
+            <input type="text" id="name" required class="input-field-reg" />
           </div>
-
           <!-- Email Field -->
           <div>
             <label for="email" class="block text-lg font-medium">Email:</label>
-            <input type="email" id="email" required class="my-custom-class" />
+            <input type="email" id="email" required class="input-field-reg" />
           </div>
-
           <!-- Password Field -->
           <div>
             <label for="password" class="block text-lg font-medium"
@@ -113,52 +107,44 @@
               type="password"
               id="password"
               required
-              class="my-custom-class"
+              class="input-field-reg"
             />
           </div>
-
           <!-- Bio Field (Optional) -->
           <div>
             <label for="bio" class="block text-lg font-medium"
               >Bio (optional):</label
             >
-            <input type="text" id="bio" class="my-custom-class" />
+            <input type="text" id="bio" class="input-field-reg" />
           </div>
-
           <!-- Avatar URL Field (Optional) -->
           <div>
             <label for="avatarUrl" class="block text-lg font-medium"
               >Avatar URL (optional):</label
             >
-            <input type="url" id="avatarUrl" class="my-custom-class" />
+            <input type="url" id="avatarUrl" class="input-field-reg" />
           </div>
-
           <!-- Avatar Alt Text Field (Optional) -->
           <div>
             <label for="avatarAlt" class="block text-lg font-medium"
               >Avatar Alt Text (optional):</label
             >
-            <input type="text" id="avatarAlt" class="my-custom-class" />
+            <input type="text" id="avatarAlt" class="input-field-reg" />
           </div>
-
           <!-- Banner URL Field (Optional) -->
           <div>
             <label for="bannerUrl" class="block text-lg font-medium"
               >Banner URL (optional):</label
             >
-            <input type="url" id="bannerUrl" class="my-custom-class" />
+            <input type="url" id="bannerUrl" class="input-field-reg" />
           </div>
-
           <!-- Banner Alt Text Field (Optional) -->
           <div>
             <label for="bannerAlt" class="block text-lg font-medium"
               >Banner Alt Text (optional):</label
             >
-            <input type="text" id="bannerAlt" class="my-custom-class" />
+            <input type="text" id="bannerAlt" class="input-field-reg" />
           </div>
-
-
-
           <!-- Submit Button -->
           <div class="mt-6 text-center">
             <button

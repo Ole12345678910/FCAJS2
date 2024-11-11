@@ -81,50 +81,52 @@ function createPostElement(post) {
 
   // Add post content
   postElement.innerHTML = `
-        <div class="post-header">
-            <p><small>Posted on: ${new Date(
-              post.created
-            ).toLocaleDateString()}</small></p>
-        </div>
-        <h3><a href="/templates/posts/details.html?postId=${post.id}">${
+  <div class="card">
+      <div class="post-header">
+          <p><small>Posted on: ${new Date(
+            post.created
+          ).toLocaleDateString()}</small></p>
+      </div>
+      <h3 class="py-4"><a href="/templates/posts/details.html?postId=${post.id}">${
     post.title
-  }</a></h3>
-  <div class="flex justify-center">
+    }</a></h3>
+    <div class="flex justify-center">
     ${
-      post.media
-        ? `<img class="w-full h-[400px] object-cover mb-4 rounded-lg" src="${post.media.url}" alt="${
-            post.media.alt || "Post Image"
-          }" class="post-image ">`
-        : ""
+    post.media
+      ? `<img class="w-full h-[400px] object-cover mb-4 rounded-lg" src="${post.media.url}" alt="${
+          post.media.alt || "Post Image"
+        }" class="post-image ">`
+      : ""
     }
-  </div>
-        <p class="post-body">${post.body || "No content available"}</p>
-        <div class="post-tags">
-            ${post.tags
-              .map((tag) => `<span class="post-tag">${tag}</span>`)
-              .join("")}
-        </div>
-        <p><strong>${post._count.comments} Comments | ${
+    </div>
+      <p class="post-body">${post.body || "No content available"}</p>
+      <div class="post-tags">
+          ${post.tags
+            .map((tag) => `<span class="post-tag">${tag}</span>`)
+            .join("")}
+      </div>
+      <p class="pb-4"><strong>${post._count.comments} Comments | ${
     post._count.reactions
-  } Reactions</strong></p>
-        <button class="delete-post bg-red-500 text-white font-semibold px-4 py-2 rounded hover:bg-red-600 transition duration-200" data-id="${
-          post.id
-        }">
+    } Reactions</strong></p>
+      <button class="delete-post bg-red-500 text-white font-semibold px-4 py-2 rounded hover:bg-red-600 transition duration-200" data-id="${
+        post.id
+      }">
     Delete Post
-</button>
-<button class="edit-post bg-blue-500 text-white font-semibold px-4 py-2 rounded hover:bg-blue-600 transition duration-200" data-id="${
+    </button>
+    <button class="edit-post bg-blue-500 text-white font-semibold px-4 py-2 rounded hover:bg-blue-600 transition duration-200" data-id="${
     post.id
-  }" data-title="${post.title}" data-body="${
+    }" data-title="${post.title}" data-body="${
     post.body
-  }" data-tags="${post.tags.join(", ")}" data-media-url="${
+    }" data-tags="${post.tags.join(", ")}" data-media-url="${
     post.media?.url || ""
-  }" data-media-alt="${post.media?.alt || ""}">
+    }" data-media-alt="${post.media?.alt || ""}">
     Edit Post
-</button>
+    </button>
 
-        <div id="edit-form-container-${
-          post.id
-        }" class="edit-form-container"></div>
+      <div id="edit-form-container-${
+        post.id
+      }" class="edit-form-container"></div>
+  </div>
     `;
 
   // Add event listeners for delete and edit buttons
