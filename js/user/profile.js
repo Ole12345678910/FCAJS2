@@ -166,7 +166,7 @@ function showEditForm(id, title, body, tags, mediaUrl, mediaAlt) {
             type="text" 
             id="post-title-${id}" 
             value="${title}" 
-            class="edit-input bg-light-gray"
+            class="edit-input"
         >
     </div>
 
