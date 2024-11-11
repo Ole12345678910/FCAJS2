@@ -57,7 +57,7 @@ This documentation provides a brief overview of the project's structure and func
 ├── /dist                 # Output folder for compiled styles (after running build)
 │   └── style.css         # Compiled Tailwind CSS file (generated after build)
 │
-└── README.md             # Documentation file (your project readme)
+└── README.md             # Documentation file
 
 ```
 
