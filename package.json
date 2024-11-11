@@ -1,7 +1,7 @@
 {
   "name": "fcajs2",
   "version": "1.0.0",
-  "description": "This documentation provides a brief overview of the project's structure and functionality. The application is designed for managing user posts, authentication, and profiles.",
+  "description": "this is a css framework prodject for noroff front-end",
   "main": "index.js",
   "devDependencies": {
     "autoprefixer": "^10.4.20",
@@ -11,7 +11,7 @@
   },
 "scripts": {
   "build": "npx postcss css/style.css -o dist/style.css",
-  "watch": "npx tailwindcss build css/style.css -o dist/style.css --watch"
+  "watch": "npx tailwindcss -i ./css/style.css -o ./dist/style.css --watch"
 },
 
   "keywords": [],

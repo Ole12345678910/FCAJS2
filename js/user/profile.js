@@ -89,13 +89,15 @@ function createPostElement(post) {
         <h3><a href="/templates/posts/details.html?postId=${post.id}">${
     post.title
   }</a></h3>
-        ${
-          post.media
-            ? `<img src="${post.media.url}" alt="${
-                post.media.alt || "Post Image"
-              }" class="post-image">`
-            : ""
-        }
+  <div class="flex justify-center">
+    ${
+      post.media
+        ? `<img class="w-full h-[400px] object-cover mb-4 rounded-lg" src="${post.media.url}" alt="${
+            post.media.alt || "Post Image"
+          }" class="post-image ">`
+        : ""
+    }
+  </div>
         <p class="post-body">${post.body || "No content available"}</p>
         <div class="post-tags">
             ${post.tags

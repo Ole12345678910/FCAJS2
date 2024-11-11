@@ -65,11 +65,13 @@ const displayPostDetails = async () => {
     <h2 class="text-3xl font-semibold text-gray-900 mb-4">${title}</h2>
     
     <p class="text-lg text-gray-700 mb-4">${body}</p>
-    ${
-      media
-        ? `<img src="${media.url}" alt="${media.alt}"/>`
-        : ""
-    }
+      <div class="flex justify-center">
+        ${
+          media
+            ? `<img class="w-full h-auto object-cover mb-4 rounded-lg" src="${media.url}" alt="${media.alt}"/>`
+            : ""
+        }
+      </div>
     <p class="text-sm text-gray-600 mb-2"><strong>Tags:</strong> ${tags.join(
       ", "
     )}</p>
