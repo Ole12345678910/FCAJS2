@@ -1,47 +1,48 @@
 // Import necessary API functions and utilities
-import { 
-    getUserProfile, 
-    fetchUserPostsByProfile, 
-    deletePost, 
-    updatePost 
-} from '../api/api.js';
-import { renderProfile } from '../utils/utils.js';
+import {
+  getUserProfile,
+  fetchUserPostsByProfile,
+  deletePost,
+  updatePost,
+} from "../api/api.js";
+import { renderProfile } from "../utils/utils.js";
 
 // Function to retrieve username from localStorage
 function getUsernameFromStorage() {
-    return localStorage.getItem('username');
+  return localStorage.getItem("username");
 }
 
 /**
  * Redirects to the login page if access token or username is missing.
  */
 function redirectToLogin() {
-    window.location.href = '/templates/auth/login.html'; // Redirect to login page
+  window.location.href = "/templates/auth/login.html"; // Redirect to login page
 }
 
 /**
  * Displays the user profile and their posts.
  */
 async function displayUserProfile() {
-    const accessToken = localStorage.getItem('accessToken');
-    const username = getUsernameFromStorage();
+  const accessToken = localStorage.getItem("accessToken");
+  const username = getUsernameFromStorage();
 
-    // Check for access token and username
-    if (!accessToken || !username) {
-        redirectToLogin();
-        return;
-    }
+  // Check for access token and username
+  if (!accessToken || !username) {
+    redirectToLogin();
+    return;
+  }
 
-    try {
-        const profileResponse = await getUserProfile(username, accessToken);
-        if (!profileResponse) throw new Error('Profile not found.');
+  try {
+    const profileResponse = await getUserProfile(username, accessToken);
+    if (!profileResponse) throw new Error("Profile not found.");
 
-        renderProfile(profileResponse); // Render the user profile
-        await displayUserPosts(username, accessToken); // Fetch and display user posts
-    } catch (error) {
-        console.error('Error loading profile data:', error.message);
-        document.getElementById('profile-error').textContent = 'Error loading profile data.';
-    }
+    renderProfile(profileResponse); // Render the user profile
+    await displayUserPosts(username, accessToken); // Fetch and display user posts
+  } catch (error) {
+    console.error("Error loading profile data:", error.message);
+    document.getElementById("profile-error").textContent =
+      "Error loading profile data.";
+  }
 }
 
 /**
@@ -50,23 +51,23 @@ async function displayUserProfile() {
  * @param {string} token - The access token for API authentication.
  */
 async function displayUserPosts(username, token) {
-    const postsContainer = document.getElementById('posts-container');
+  const postsContainer = document.getElementById("posts-container");
 
-    try {
-        const userPosts = await fetchUserPostsByProfile(username, token);
-        if (userPosts.length === 0) {
-            postsContainer.innerHTML = '<p>No posts available from this user.</p>';
-            return;
-        }
-
-        userPosts.forEach(post => {
-            const postElement = createPostElement(post);
-            postsContainer.appendChild(postElement); // Append each post to the container
-        });
-    } catch (error) {
-        console.error('Error fetching user posts:', error.message);
-        postsContainer.innerHTML = '<p>Error loading posts.</p>';
+  try {
+    const userPosts = await fetchUserPostsByProfile(username, token);
+    if (userPosts.length === 0) {
+      postsContainer.innerHTML = "<p>No posts available from this user.</p>";
+      return;
     }
+
+    userPosts.forEach((post) => {
+      const postElement = createPostElement(post);
+      postsContainer.appendChild(postElement); // Append each post to the container
+    });
+  } catch (error) {
+    console.error("Error fetching user posts:", error.message);
+    postsContainer.innerHTML = "<p>Error loading posts.</p>";
+  }
 }
 
 /**
@@ -75,34 +76,69 @@ async function displayUserPosts(username, token) {
  * @returns {HTMLElement} The HTML element representing the post.
  */
 function createPostElement(post) {
-    const postElement = document.createElement('div');
-    postElement.classList.add('post');
+  const postElement = document.createElement("div");
+  postElement.classList.add("post");
 
-    // Add post content
-    postElement.innerHTML = `
-        <div class="post-header">
-            <p><small>Posted on: ${new Date(post.created).toLocaleDateString()}</small></p>
-        </div>
-        <h3><a href="/templates/posts/details.html?postId=${post.id}">${post.title}</a></h3>
-        ${post.media ? `<img src="${post.media.url}" alt="${post.media.alt || 'Post Image'}" class="post-image">` : ''}
-        <p class="post-body">${post.body || 'No content available'}</p>
-        <div class="post-tags">
-            ${post.tags.map(tag => `<span class="post-tag">${tag}</span>`).join('')}
-        </div>
-        <p><strong>${post._count.comments} Comments | ${post._count.reactions} Reactions</strong></p>
-        <button class="delete-post" data-id="${post.id}">Delete Post</button>
-        <button class="edit-post" data-id="${post.id}" data-title="${post.title}" data-body="${post.body}" data-tags="${post.tags.join(', ')}" data-media-url="${post.media?.url || ''}" data-media-alt="${post.media?.alt || ''}">Edit Post</button>
-        <div id="edit-form-container-${post.id}" class="edit-form-container"></div>
+  // Add post content
+  postElement.innerHTML = `
+  <div class="card">
+      <div class="post-header">
+          <p><small>Posted on: ${new Date(
+            post.created
+          ).toLocaleDateString()}</small></p>
+      </div>
+      <h3 class="py-4"><a href="/templates/posts/details.html?postId=${post.id}">${
+    post.title
+    }</a></h3>
+    <div class="flex justify-center">
+    ${
+    post.media
+      ? `<img class="w-full h-[400px] object-cover mb-4 rounded-lg" src="${post.media.url}" alt="${
+          post.media.alt || "Post Image"
+        }" class="post-image ">`
+      : ""
+    }
+    </div>
+      <p class="post-body">${post.body || "No content available"}</p>
+      <div class="post-tags">
+          ${post.tags
+            .map((tag) => `<span class="post-tag">${tag}</span>`)
+            .join("")}
+      </div>
+      <p class="pb-4"><strong>${post._count.comments} Comments | ${
+    post._count.reactions
+    } Reactions</strong></p>
+      <button class="delete-post bg-red-500 text-white font-semibold px-4 py-2 rounded hover:bg-red-600 transition duration-200" data-id="${
+        post.id
+      }">
+    Delete Post
+    </button>
+    <button class="edit-post bg-blue-500 text-white font-semibold px-4 py-2 rounded hover:bg-blue-600 transition duration-200" data-id="${
+    post.id
+    }" data-title="${post.title}" data-body="${
+    post.body
+    }" data-tags="${post.tags.join(", ")}" data-media-url="${
+    post.media?.url || ""
+    }" data-media-alt="${post.media?.alt || ""}">
+    Edit Post
+    </button>
+
+      <div id="edit-form-container-${
+        post.id
+      }" class="edit-form-container"></div>
+  </div>
     `;
 
-    // Add event listeners for delete and edit buttons
-    postElement.querySelector('.delete-post').addEventListener('click', () => handlePostDelete(post.id));
-    postElement.querySelector('.edit-post').addEventListener('click', (e) => {
-        const { id, title, body, tags, mediaUrl, mediaAlt } = e.target.dataset;
-        showEditForm(id, title, body, tags, mediaUrl, mediaAlt);
-    });
+  // Add event listeners for delete and edit buttons
+  postElement
+    .querySelector(".delete-post")
+    .addEventListener("click", () => handlePostDelete(post.id));
+  postElement.querySelector(".edit-post").addEventListener("click", (e) => {
+    const { id, title, body, tags, mediaUrl, mediaAlt } = e.target.dataset;
+    showEditForm(id, title, body, tags, mediaUrl, mediaAlt);
+  });
 
-    return postElement;
+  return postElement;
 }
 
 /**
@@ -115,33 +151,90 @@ function createPostElement(post) {
  * @param {string} mediaAlt - The current media alt text of the post.
  */
 function showEditForm(id, title, body, tags, mediaUrl, mediaAlt) {
-    const editFormContainer = document.getElementById(`edit-form-container-${id}`);
-    if (!editFormContainer) {
-        console.error(`Edit form container not found for post ID: ${id}`);
-        return;
-    }
+  const editFormContainer = document.getElementById(
+    `edit-form-container-${id}`
+  );
+  if (!editFormContainer) {
+    console.error(`Edit form container not found for post ID: ${id}`);
+    return;
+  }
 
-    editFormContainer.innerHTML = `
-        <form id="edit-post-form-${id}">
-            <h3>Edit Post</h3>
-            <label for="post-title">Title:</label>
-            <input type="text" id="post-title-${id}" value="${title}">
-            <label for="post-body">Body:</label>
-            <textarea id="post-body-${id}">${body}</textarea>
-            <label for="post-tags">Tags (comma separated):</label>
-            <input type="text" id="post-tags-${id}" value="${tags}">
-            <label for="post-media-url">Media URL:</label>
-            <input type="text" id="post-media-url-${id}" value="${mediaUrl}">
-            <label for="post-media-alt">Media Alt Text:</label>
-            <input type="text" id="post-media-alt-${id}" value="${mediaAlt}">
-            <button type="submit">Update Post</button>
-        </form>
+  editFormContainer.innerHTML = `
+<form id="edit-post-form-${id}" class="edit-post-form p-6 rounded-lg shadow-md space-y-4">
+    <h3 class="text-lg font-semibold text-gray-800">Edit Post</h3>
+    
+    <!-- Title -->
+    <div>
+        <label for="post-title-${id}" class="block  text-sm font-medium text-gray-700">Title:</label>
+        <input 
+            type="text" 
+            id="post-title-${id}" 
+            value="${title}" 
+            class="edit-input"
+        >
+    </div>
+
+    <!-- Body -->
+    <div>
+        <label for=" post-body-${id}" class="block text-sm font-medium text-gray-700">Body:</label>
+        <textarea 
+            id="post-body-${id}" 
+            class="edit-textarea"
+        >${body}</textarea>
+    </div>
+
+    <!-- Tags -->
+    <div>
+        <label for="post-tags-${id}" class="block text-sm font-medium text-gray-700">Tags (comma separated):</label>
+        <input 
+            type="text" 
+            id="post-tags-${id}" 
+            value="${tags}" 
+            class="edit-input"
+        >
+    </div>
+
+    <!-- Media URL -->
+    <div>
+        <label for="post-media-url-${id}" class="block text-sm font-medium text-gray-700">Media URL:</label>
+        <input 
+            type="text" 
+            id="post-media-url-${id}" 
+            value="${mediaUrl}" 
+            class="edit-input"
+        >
+    </div>
+
+    <!-- Media Alt Text -->
+    <div>
+        <label for="post-media-alt-${id}" class="block text-sm font-medium text-gray-700">Media Alt Text:</label>
+        <input 
+            type="text" 
+            id="post-media-alt-${id}" 
+            value="${mediaAlt}" 
+            class="edit-input"
+        >
+    </div>
+
+    <!-- Submit Button -->
+    <div class="text-right">
+        <button 
+            type="submit" 
+            class="edit-submit-btn"
+        >
+            Update Post
+        </button>
+    </div>
+</form>
+
     `;
 
-    document.getElementById(`edit-post-form-${id}`).addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const updatedPost = gatherUpdatedPostData(id);
-        await handlePostUpdate(id, updatedPost);
+  document
+    .getElementById(`edit-post-form-${id}`)
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const updatedPost = gatherUpdatedPostData(id);
+      await handlePostUpdate(id, updatedPost);
     });
 }
 
@@ -151,15 +244,18 @@ function showEditForm(id, title, body, tags, mediaUrl, mediaAlt) {
  * @returns {Object} The updated post data.
  */
 function gatherUpdatedPostData(id) {
-    return {
-        title: document.getElementById(`post-title-${id}`).value,
-        body: document.getElementById(`post-body-${id}`).value,
-        tags: document.getElementById(`post-tags-${id}`).value.split(',').map(tag => tag.trim()),
-        media: {
-            url: document.getElementById(`post-media-url-${id}`).value,
-            alt: document.getElementById(`post-media-alt-${id}`).value
-        }
-    };
+  return {
+    title: document.getElementById(`post-title-${id}`).value,
+    body: document.getElementById(`post-body-${id}`).value,
+    tags: document
+      .getElementById(`post-tags-${id}`)
+      .value.split(",")
+      .map((tag) => tag.trim()),
+    media: {
+      url: document.getElementById(`post-media-url-${id}`).value,
+      alt: document.getElementById(`post-media-alt-${id}`).value,
+    },
+  };
 }
 
 /**
@@ -168,21 +264,25 @@ function gatherUpdatedPostData(id) {
  * @param {Object} updatedPost - The updated post data.
  */
 async function handlePostUpdate(postId, updatedPost) {
-    const token = localStorage.getItem('accessToken');
+  const token = localStorage.getItem("accessToken");
 
-    try {
-        const response = await updatePost(postId, updatedPost, token);
-        if (response.error) {
-            alert(`Error updating post: ${response.error.message || 'Unknown error occurred.'}`);
-            return;
-        }
-
-        alert('Post updated successfully.');
-        window.location.reload(); // Refresh the page after successful update
-    } catch (error) {
-        console.error('Error updating post:', error.message);
-        alert('Error updating post. Please try again later.');
+  try {
+    const response = await updatePost(postId, updatedPost, token);
+    if (response.error) {
+      alert(
+        `Error updating post: ${
+          response.error.message || "Unknown error occurred."
+        }`
+      );
+      return;
     }
+
+    alert("Post updated successfully.");
+    window.location.reload(); // Refresh the page after successful update
+  } catch (error) {
+    console.error("Error updating post:", error.message);
+    alert("Error updating post. Please try again later.");
+  }
 }
 
 /**
@@ -191,36 +291,18 @@ async function handlePostUpdate(postId, updatedPost) {
  */
 // Function to handle deleting a post
 const handlePostDelete = async (postId, token) => {
-    const confirmDelete = confirm("Are you sure you want to delete this post?");
-    if (confirmDelete) {
-        const deletionSuccessful = await deletePost(postId, token);
-        if (deletionSuccessful) {
-            alert('Post deleted successfully.');
-            window.location.reload();  // Refresh the page after deletion
-        } else {
-            // Handle specific error like 401 Unauthorized
-            alert('Your session has expired. Please log in again.');
-        }
+  const confirmDelete = confirm("Are you sure you want to delete this post?");
+  if (confirmDelete) {
+    const deletionSuccessful = await deletePost(postId, token);
+    if (deletionSuccessful) {
+      alert("Post deleted successfully.");
+      window.location.reload(); // Refresh the page after deletion
+    } else {
+      // Handle specific error like 401 Unauthorized
+      alert("Your session has expired. Please log in again.");
     }
-};
-
-/**
- * Creates a link to the post creation page.
- */
-function createPostLink() {
-    const linkContainer = document.getElementById('create');
-    const linkHtml = `
-        <a href="/templates/posts/create.html" id="create-post-link" style="display: inline-block; margin: 20px 0; padding: 10px; background-color: #4CAF50; color: white; text-align: center; text-decoration: none; border-radius: 5px;">
-            Create New Post
-        </a>
-    `;
-    linkContainer.innerHTML += linkHtml; // Add the link HTML to the container
-}
-
-// Initialize post link creation and profile display on page load
-window.onload = () => {
-    createPostLink(); // Create the post link when the profile page loads
+  }
 };
 
 // Run the function to display the user profile when the DOM is fully loaded
-document.addEventListener('DOMContentLoaded', displayUserProfile);
+document.addEventListener("DOMContentLoaded", displayUserProfile);

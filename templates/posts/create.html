@@ -1,31 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/dist/style.css" />
     <title>Create Post</title>
-</head>
-<body>
-    <h1>Create a New Post</h1>
-    <form id="createPostForm">
-        <label for="title">Title:</label>
-        <input type="text" id="title" required>
-
-        <label for="body">Body:</label>
-        <textarea id="body"></textarea>
-
-        <label for="tags">Tags (comma separated):</label>
-        <input type="text" id="tags">
-
-        <label for="mediaUrl">Media URL:</label>
-        <input type="text" id="mediaUrl">
-
-        <label for="mediaAlt">Media Alt Text:</label>
-        <input type="text" id="mediaAlt">
-
-        <button type="submit">Create</button>
-    </form>
+  </head>
+  <body class="bg-grey-blue">
+    <header class="header bg-light-green text-white p-4">
+      <a href="/index.html" class="text-2xl font-bold">Home</a>
+      <!-- Hamburger Icon (Hidden on larger screens) -->
+      <div class="lg:hidden flex items-center">
+        <button id="hamburger-icon" class="text-white p-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            class="w-6 h-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            ></path>
+          </svg>
+        </button>
+      </div>
+      <!-- Navbar Links (Visible on larger screens) -->
+      <div class="hidden lg:flex space-x-6">
+        <a
+          href="/templates/posts/postFollow.html"
+          class="hover:bg-green-300 px-3 py-2 rounded"
+          >Followers Post</a
+        >
+        <a
+          href="/templates/user/profile.html"
+          class="hover:bg-green-300 px-3 py-2 rounded"
+          >My Profile</a
+        >
+        <a
+          href="/templates/auth/login.html"
+          class="hover:bg-green-300 px-3 py-2 rounded"
+          >Login</a
+        >
+        <a
+          href="/templates/auth/register.html"
+          class="hover:bg-green-300 px-3 py-2 rounded"
+          >Register</a
+        >
+        <button id="logoutButton" class="hover:bg-green-300 px-3 py-2 rounded">
+          Logout
+        </button>
+      </div>
+      <!-- Mobile Menu (Hidden by default) -->
+      <div
+        id="mobile-menu"
+        class="lg:hidden hidden bg-light-green text-white space-y-4 p-4 absolute top-16 left-0 w-full"
+      >
+        <a
+          href="/templates/posts/postFollow.html"
+          class="block px-3 py-2 rounded"
+          >Followers Post</a
+        >
+        <a href="/templates/user/profile.html" class="block px-3 py-2 rounded"
+          >My Profile</a
+        >
+        <a href="/templates/auth/login.html" class="block px-3 py-2 rounded"
+          >Login</a
+        >
+        <a href="/templates/auth/register.html" class="block px-3 py-2 rounded"
+          >Register</a
+        >
+        <button id="logoutButton" class="block px-3 py-2 rounded">
+          Logout
+        </button>
+      </div>
+    </header>
+    <h1 class="text-center p-4 text-2xl">Create a New Post</h1>
+    <div class="flex justify-center">
+      <form
+        id="createPostForm"
+        class="edit-post-form p-6 rounded-lg shadow-md space-y-4 max-w-[500px] min-w-[400px] mx-auto"
+      >
+        <!-- Title Input -->
+        <div>
+          <label for="title" class="block text-gray-700 font-semibold mb-1"
+            >Title:</label
+          >
+          <input type="text" id="title" required class="edit-input" />
+        </div>
+        <!-- Body Textarea -->
+        <div>
+          <label for="body" class="block text-gray-700 font-semibold mb-1"
+            >Body:</label
+          >
+          <textarea id="body" rows="4" class="edit-input"></textarea>
+        </div>
+        <!-- Tags Input -->
+        <div>
+          <label for="tags" class="block text-gray-700 font-semibold mb-1"
+            >Tags (comma separated):</label
+          >
+          <input type="text" id="tags" class="edit-input" />
+        </div>
+        <!-- Media URL Input -->
+        <div>
+          <label for="mediaUrl" class="block text-gray-700 font-semibold mb-1"
+            >Media URL:</label
+          >
+          <input type="text" id="mediaUrl" class="edit-input" />
+        </div>
+        <!-- Media Alt Text Input -->
+        <div>
+          <label for="mediaAlt" class="block text-gray-700 font-semibold mb-1"
+            >Media Alt Text:</label
+          >
+          <input type="text" id="mediaAlt" class="edit-input" />
+        </div>
+        <!-- Submit Button -->
+        <div class="text-center">
+          <button type="submit" class="edit-input">Create</button>
+        </div>
+      </form>
+    </div>
+    <script defer type="module" src="/js/utils/utils.js"></script>
     <script defer type="module" src="/js/posts/create.js"></script>
-</body>
+  </body>
 </html>

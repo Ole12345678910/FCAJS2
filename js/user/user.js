@@ -139,7 +139,6 @@ async function displayUserProfile() {
  */
 function displayUserPosts(posts) {
     const postsHtml = posts.length ? `
-        <h2>Posts</h2>
         <div id="user-posts">
             ${posts.map(createPostHtml).join('')} <!-- Create HTML for each post -->
         </div>
@@ -155,14 +154,35 @@ function displayUserPosts(posts) {
  */
 function createPostHtml(post) {
     return `
-        <div class="post">
-            <h3><a href="/templates/posts/details.html?postId=${post.id}">${post.title}</a></h3>
-            <p>${post.body}</p>
-            ${post.media ? `<img src="${post.media.url}" alt="${post.media.alt || 'Post Image'}" style="max-width:100%;">` : ''}
-            <p>Tags: ${post.tags ? post.tags.join(', ') : 'None'}</p>
-            <p>Created: ${new Date(post.created).toLocaleString()}</p>
-            <p>Comments: ${post._count?.comments || 0}</p>
-            <p>Reactions: ${post._count?.reactions || 0}</p>
+        <div class="card">
+            <!-- Post Title -->
+            <h3 class="text-2xl font-semibold text-gray-800 mb-4">
+                <a href="/templates/posts/details.html?postId=${post.id}" class="hover:text-blue-500">
+                    ${post.title}
+                </a>
+            </h3>
+
+            <!-- Post Body -->
+            <p class="text-sm text-gray-600 mb-4">
+                ${post.body || 'No content available'}
+            </p>
+
+            <!-- Post Media (Image) -->
+            ${post.media ? `
+                <img src="${post.media.url}" alt="${post.media.alt || 'Post Image'}" class="w-full h-[400px] object-cover mb-4 rounded-lg">
+            ` : ''}
+
+            <!-- Tags -->
+            <p class="text-xs text-gray-500 mb-2">
+                Tags: ${post.tags && post.tags.length ? post.tags.join(', ') : 'None'}
+            </p>
+
+            <!-- Post Information -->
+            <div class="post-meta text-xs text-gray-500 mb-2">
+                <p>Created: ${new Date(post.created).toLocaleString()}</p>
+                <p>Comments: ${post._count?.comments || 0}</p>
+                <p>Reactions: ${post._count?.reactions || 0}</p>
+            </div>
         </div>
     `;
 }

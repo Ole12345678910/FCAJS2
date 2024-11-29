@@ -9,24 +9,29 @@ This documentation provides a brief overview of the project's structure and func
 ```
 /FCAJS2
 │
-├── api.js                # API usage for fetching and interacting with data
+├── package.json           # The main npm configuration file that lists dependencies and scripts
+├── postcss.config.js      # PostCSS configuration file, used with TailwindCSS for build process
+├── tailwind.config.js     # TailwindCSS configuration file, used for customizing your Tailwind setup
 │
-├── /auth
+├── /api                  # API usage for fetching and interacting with data
+│   └── api.js            # Handles all API interactions
+│
+├── /auth                 # Authentication functionalities
 │   ├── login.js          # User login functionality
 │   ├── logout.js         # User logout functionality
 │   └── register.js       # User registration functionality
 │
-├── /constants
-│   └── config.js         # Exports of API keys and links
+├── /constants            # Contains constants like API keys, configuration
+│   └── config.js         # Stores and exports API keys and links
 │
-├── /posts
+├── /posts                # Post-related functionalities
 │   ├── create.js         # Creating new posts
 │   ├── delete.js         # Deleting posts
 │   ├── details.js        # Viewing post details
 │   ├── post.js           # General post functionalities
 │   └── postFollow.js     # Following/unfollowing posts
 │
-├── /user
+├── /user                 # User profile management functionalities
 │   ├── profile.js        # User profile management
 │   └── user.js           # Managing other users' profiles
 │
@@ -44,7 +49,15 @@ This documentation provides a brief overview of the project's structure and func
 │       ├── profile.html  # HTML for viewing/editing user profile
 │       └── user.html     # HTML for viewing other users' profiles
 │   
-├──────── index.html      # Main HTML file for the application
+├── index.html            # Main HTML file for the application
+│
+├── /css                  # CSS folder containing styles
+│   └── style.css         # Your base stylesheet for the app
+│
+├── /dist                 # Output folder for compiled styles (after running build)
+│   └── style.css         # Compiled Tailwind CSS file (generated after build)
+│
+└── README.md             # Documentation file
 
 ```
 
@@ -66,6 +79,23 @@ This documentation provides a brief overview of the project's structure and func
 
 ## API Documentation
 
-The application uses a RESTful API for managing user accounts and posts, including endpoints for registration, authentication, and post management.
+
+## Installation
+
+To set up the project on your local machine, follow these steps:
+
+1. **Install all required packages**:
+   Run the following command to install all dependencies defined in `package.json`:
+   ```bash
+   npm install
+   ```
+   > **Note**: You can also use `npm i` as a shortcut for `npm install`.
+
+2. **Run CSS Watch**:
+   To automatically compile your CSS changes, run the following command:
+   ```bash
+   npm run watch
+   ```
 
 ---
+

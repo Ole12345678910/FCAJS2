@@ -4,21 +4,96 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Noroff FED2 JS2 CA</title>
-    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="dist/style.css" />
   </head>
-  <body>
-    <h1>Home</h1>
-    <a href="/templates/posts/postFollow.html">Followers Post</a>
-    <a href="/templates/user/profile.html">My Profile</a>
-    <a href="/templates/auth/login.html">Login</a>
-    <a href="/templates/auth/register.html">Register</a>
-    <button id="logoutButton">Logout</button>
-    <div id="search-container">
-      <input type="text" id="search-query" placeholder="Search posts" />
-      <button id="search-btn">Search</button>
+  <body class="bg-grey-blue">
+    <header class="header bg-light-green text-white p-4">
+      <a href="/index.html" class="text-2xl font-bold">Home</a>
+      <!-- Hamburger Icon (Hidden on larger screens) -->
+      <div class="lg:hidden flex items-center">
+        <button id="hamburger-icon" class="text-white p-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            class="w-6 h-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            ></path>
+          </svg>
+        </button>
+      </div>
+      <!-- Navbar Links (Visible on larger screens) -->
+      <div class="hidden lg:flex space-x-6">
+        <a
+          href="/templates/posts/postFollow.html"
+          class="hover:bg-green-300 px-3 py-2 rounded"
+          >Followers Post</a
+        >
+        <a
+          href="/templates/user/profile.html"
+          class="hover:bg-green-300 px-3 py-2 rounded"
+          >My Profile</a
+        >
+        <a
+          href="/templates/auth/login.html"
+          class="hover:bg-green-300 px-3 py-2 rounded"
+          >Login</a
+        >
+        <a
+          href="/templates/auth/register.html"
+          class="hover:bg-green-300 px-3 py-2 rounded"
+          >Register</a
+        >
+        <button id="logoutButton" class="hover:bg-green-300 px-3 py-2 rounded">
+          Logout
+        </button>
+      </div>
+      <!-- Mobile Menu (Hidden by default) -->
+      <div
+        id="mobile-menu"
+        class="lg:hidden hidden bg-light-green text-white space-y-4 p-4 absolute top-16 left-0 w-full"
+      >
+        <a
+          href="/templates/posts/postFollow.html"
+          class="block px-3 py-2 rounded"
+          >Followers Post</a
+        >
+        <a href="/templates/user/profile.html" class="block px-3 py-2 rounded"
+          >My Profile</a
+        >
+        <a href="/templates/auth/login.html" class="block px-3 py-2 rounded"
+          >Login</a
+        >
+        <a href="/templates/auth/register.html" class="block px-3 py-2 rounded"
+          >Register</a
+        >
+        <button id="logoutButton" class="block px-3 py-2 rounded">
+          Logout
+        </button>
+      </div>
+    </header>
+    <div class="flex justify-center search-bar" id="search-container">
+      <input
+        class="p-1 w-96"
+        type="text"
+        id="search-query"
+        placeholder="Search posts"
+      />
+      <button class="bg-blue-100 px-1" id="search-btn">Search</button>
     </div>
     <div id="button-container"></div>
-    <div id="posts-container"></div>
+    <div class="flex justify-center w-full">
+      <div
+        class="flex justify-center flex-col max-w-4xl w-full"
+        id="posts-container"
+      ></div>
+    </div>
     <script defer type="module" src="/js/posts/post.js"></script>
     <script defer type="module" src="/js/auth/logout.js"></script>
   </body>
