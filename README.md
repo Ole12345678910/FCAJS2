@@ -4,9 +4,51 @@
 
 This documentation provides a brief overview of the project's structure and functionality. The application is designed for managing user posts, authentication, and profiles.
 
+## 🛠️ Installation
+
+To run the FCAJS2 project locally, follow these steps:
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Ole12345678910/FCAJS2.git
+   cd FCAJS2
+   
+2. **Install dependencies:**
+
+   The project uses npm (Node.js):
+
+   ```bash
+   npm install
+   ```
+
+3. **Start the development server:**
+
+   If applicable (for example, if this is a Node.js or frontend project):
+
+   ```bash
+   npm run dev
+   ```
+
+   or
+
+   ```bash
+   npm start
+   ```
+
+4. **Open the application in your browser:**
+
+   Visit `http://localhost:3000` (or the port your server uses).
+
+
+---
+
+If you tell me what tech stack this project uses (Node.js backend? React frontend? Static files?), I can tailor this install section even better!
+
+
 ## File Structure
 
 ```
+
 /FCAJS2
 │
 ├── api.js                # API usage for fetching and interacting with data
@@ -47,7 +89,6 @@ This documentation provides a brief overview of the project's structure and func
 ├──────── index.html      # Main HTML file for the application
 
 ```
-
 ## Directory Descriptions
 
 - **API**: The `api.js` file handles all API interactions, including fetching and posting data.
